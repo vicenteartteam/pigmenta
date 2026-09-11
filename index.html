@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pigmenta</title>
+<style>
+:root{
+  --paper:#F7F6F2;
+  --paper-2:#FFFFFE;
+  --ink:#16150F;
+  --muted:#75716A;
+  --rule:#DFDBD1;
+  --rule-soft:#EAE7DF;
+  --accent:#2A4A9E;
+  --warn:#8A4B12;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:17px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.35'/></svg>");
+  opacity:.035;mix-blend-mode:multiply;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+
+/* ---------- cabecera ---------- */
+header.top{padding:56px 0 8px}
+h1.brand{
+  font-size:clamp(34px,6vw,52px);
+  font-weight:400;letter-spacing:-.02em;margin:0;line-height:1;
+}
+h1.brand span{font-style:italic;color:var(--muted)}
+p.byline{margin:12px 0 0;font-style:italic;font-size:18px;color:var(--ink);
+  padding-left:14px;border-left:2px solid var(--rule);max-width:46ch;line-height:1.35}
+p.lede{margin:14px 0 0;max-width:48ch;color:var(--muted);font-size:16px;line-height:1.5}
+
+/* ---------- franja de lavados ---------- */
+.washes{
+  display:flex;gap:0;margin:0;height:92px;
+  border:1px solid var(--rule);background:var(--paper-2);overflow-x:auto;
+}
+.wash{
+  flex:1 0 34px;min-width:34px;border:0;padding:0;cursor:pointer;position:relative;
+  border-right:1px solid rgba(255,255,255,.5);
+}
+.wash:last-child{border-right:0}
+.wash i{position:absolute;inset:0;display:block}
+.wash:hover i,.wash:focus-visible i{outline:2px solid var(--ink);outline-offset:-3px}
+.codes{background:var(--paper-2);border:1px solid var(--rule);padding:6px 24px 26px}
+.codegrp{display:flex;align-items:center;gap:14px;font-family:var(--serif);font-size:17px;
+  color:var(--ink);margin:26px 0 12px}
+.codegrp::after{content:"";flex:1;height:1px;background:var(--rule-soft)}
+.coderow{display:flex;flex-wrap:wrap;gap:8px}
+.code-chip{font-family:var(--sans);font-size:13px;padding:6px 11px;border:1px solid var(--rule);
+  background:var(--paper);border-radius:2px;cursor:pointer;color:var(--ink);display:flex;gap:8px;align-items:center}
+.code-chip:hover{border-color:var(--ink)}
+.code-chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.code-chip i{width:13px;height:13px;border-radius:2px;border:1px solid rgba(0,0,0,.15)}
+.herobar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+  flex-wrap:wrap;margin:14px 0 44px}
+.viewtoggle{display:flex;gap:0}
+.viewtoggle button{font-family:var(--sans);font-size:12.5px;padding:6px 13px;cursor:pointer;
+  border:1px solid var(--rule);background:transparent;color:var(--muted);border-right:0}
+.viewtoggle button:last-child{border-right:1px solid var(--rule)}
+.viewtoggle button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.hits{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin:0 0 20px;min-height:1em}
+.washes-cap{font-family:var(--sans);font-size:12px;color:var(--muted);margin:0;max-width:44ch}
+
+/* ---------- pestañas ---------- */
+nav.tabs{display:flex;gap:32px;border-bottom:1px solid var(--rule);margin-bottom:34px;flex-wrap:wrap}
+nav.tabs button{
+  background:none;border:0;padding:0 0 13px;margin-bottom:-1px;cursor:pointer;
+  font-family:var(--serif);font-size:18px;color:var(--muted);border-bottom:2px solid transparent;
+}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+nav.tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* ---------- controles ---------- */
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px;align-items:center}
+input[type=search],select{
+  font-family:var(--sans);font-size:14px;padding:11px 13px;
+  border:1px solid var(--rule);background:var(--paper-2);color:var(--ink);border-radius:2px;
+}
+input[type=search]{min-width:230px;flex:1}
+label.chk{font-family:var(--sans);font-size:13.5px;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer}
+button.btn{
+  font-family:var(--sans);font-size:13.5px;padding:9px 14px;cursor:pointer;
+  border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:2px;
+}
+button.btn.ghost{background:transparent;color:var(--ink)}
+button.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ---------- rejilla de fichas ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:20px}
+.card{
+  background:var(--paper-2);border:1px solid var(--rule-soft);border-radius:2px;
+  padding:0;cursor:pointer;text-align:left;font-family:inherit;color:inherit;
+  display:flex;flex-direction:column;
+}
+.card:hover{border-color:var(--ink)}
+.card:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.card .swatch{height:72px;border-bottom:1px solid var(--rule-soft)}
+.card .body{padding:13px 15px 16px}
+.card .code{font-family:var(--sans);font-size:11.5px;letter-spacing:.04em;color:var(--muted)}
+.card .name{font-size:16.5px;line-height:1.25;margin-top:2px}
+.card .brandline{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:5px}
+
+/* ---------- ficha de detalle ---------- */
+.sheet{
+  position:fixed;inset:0;background:rgba(20,19,15,.42);z-index:20;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.sheet[hidden]{display:none}
+.sheet-inner{
+  background:var(--paper);width:100%;max-width:620px;max-height:88vh;overflow:auto;
+  border:1px solid var(--ink);border-bottom:0;padding:0 0 28px;
+}
+@media(min-width:640px){.sheet{align-items:center}.sheet-inner{border-bottom:1px solid var(--ink)}}
+.sheet-wash{height:120px}
+.sheet-pad{padding:18px 22px 0}
+.sheet h2{font-size:28px;font-weight:400;margin:6px 0 2px;line-height:1.1}
+.sheet .code{font-family:var(--sans);font-size:12px;letter-spacing:.05em;color:var(--muted)}
+.close{position:absolute;top:0;right:0;margin:10px;background:var(--paper);border:1px solid var(--rule);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:17px;line-height:1}
+.props{margin:18px 0 0;border-top:1px solid var(--rule)}
+.prop{display:grid;grid-template-columns:120px 1fr auto;gap:12px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--rule-soft);font-family:var(--sans);font-size:13px}
+.prop b{font-weight:500;color:var(--muted)}
+.bar{height:5px;background:var(--rule-soft);position:relative}
+.bar span{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
+.note{font-size:16px;color:var(--ink);margin:16px 0 0;max-width:60ch}
+.tubes-in{margin-top:20px}
+.tubes-in h3{font-size:14px;font-family:var(--sans);font-weight:500;color:var(--muted);margin:0 0 8px}
+.tube-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule-soft);font-size:15px}
+.tube-row em{font-style:normal;color:var(--muted);font-family:var(--sans);font-size:12.5px}
+
+/* ---------- avisos y etiquetas ---------- */
+.tubenote{font-family:var(--sans);font-size:11.5px;color:var(--warn);margin-top:6px;line-height:1.35}
+.tone{border:1px solid var(--rule-soft);background:var(--paper-2);margin:0 0 20px}
+.tone-head{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--rule-soft)}
+.tone-head .sw{width:96px;flex:0 0 96px}
+.tone-head .meta{padding:14px 18px}
+.tone-head h3{margin:0;font-size:19px;font-weight:400}
+.tone-head .sub{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:3px}
+.opt{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;
+  padding:12px 18px;border-bottom:1px solid var(--rule-soft)}
+.opt:last-child{border-bottom:0}
+.opt .sw{height:38px;border:1px solid var(--rule)}
+.opt .txt{font-size:15.5px;line-height:1.35}
+.opt .sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:3px;
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fit{font-family:var(--sans);font-size:11.5px;padding:3px 8px;border:1px solid var(--rule);
+  color:var(--muted);border-radius:2px;white-space:nowrap}
+.fit.good{border-color:var(--ink);color:var(--ink)}
+.fit.bad{border-color:var(--warn);color:var(--warn)}
+.pal{border:1px solid var(--rule-soft);background:var(--paper-2);margin:0 0 26px;padding:22px 24px 24px}
+.pal h3{margin:0;font-size:24px;font-weight:400}
+.pal .anos{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:2px}
+.pal .nota{font-size:16px;margin:12px 0 0;max-width:62ch}
+.pal .fuente{font-family:var(--sans);font-size:11.5px;color:var(--muted);margin:10px 0 0;max-width:62ch}
+.palstrip{display:flex;height:46px;margin:18px 0 14px;border:1px solid var(--rule)}
+.palstrip i{flex:1}
+.palcols{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 18px;margin-bottom:18px}
+.palcol{display:flex;gap:9px;align-items:center;font-size:15px;padding:3px 0}
+.palmix{display:grid;grid-template-columns:44px 1fr;gap:13px;align-items:center;
+  padding:10px 0;border-top:1px solid var(--rule-soft)}
+.palmix .sw{height:32px;border:1px solid var(--rule)}
+.palmix .q{font-size:15.5px}
+.palmix .r{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:2px}
+.pendiente{border-left:3px solid var(--rule);padding:14px 18px;margin:0 0 12px;background:var(--paper-2)}
+.pendiente b{font-weight:400}
+.guia{margin:20px 0 0}
+.guia h3{font-size:14px;font-family:var(--sans);font-weight:500;color:var(--muted);margin:0 0 8px}
+.guia p{margin:0 0 10px;font-size:16px;max-width:60ch}
+.guia ul{margin:0;padding-left:19px;font-size:15.5px}
+.guia li{margin-bottom:6px}
+.socios{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:4px}
+.socio{display:flex;gap:9px;align-items:center;font-size:14px;background:var(--paper-2);
+  border:1px solid var(--rule-soft);padding:7px 9px;cursor:pointer;text-align:left;
+  font-family:inherit;color:inherit}
+.socio:hover{border-color:var(--ink)}
+.hp{display:inline-block;margin-top:6px;font-family:var(--sans);font-size:13px;color:var(--ink)}
+.socio .sw2{width:26px;height:26px;flex:0 0 26px;border:1px solid rgba(0,0,0,.15)}
+.tag{font-family:var(--sans);font-size:11px;padding:2px 6px;border:1px solid var(--rule);color:var(--muted);border-radius:2px;white-space:nowrap}
+.tag.risk{border-color:var(--warn);color:var(--warn)}
+.banner{
+  border-left:3px solid var(--warn);background:var(--paper-2);padding:16px 20px;margin:0 0 30px;
+  font-size:15px;color:var(--ink);max-width:70ch;
+}
+.banner b{font-weight:400;color:var(--warn)}
+.empty{color:var(--muted);padding:34px 0;max-width:52ch}
+
+/* ---------- mi caja ---------- */
+.boxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 18px}
+.boxitem{display:flex;gap:9px;align-items:center;padding:5px 0;font-size:15px}
+.boxitem input{margin:0}
+.dot{width:16px;height:16px;border-radius:2px;flex:0 0 16px;border:1px solid rgba(0,0,0,.15)}
+.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-bottom:28px}
+.panel{background:var(--paper-2);border:1px solid var(--rule-soft);padding:16px 18px}
+.panel h3{margin:0 0 8px;font-size:19px;font-weight:400}
+.panel ul{margin:0;padding-left:18px;font-size:15px}
+.panel li{margin-bottom:5px}
+
+/* ---------- mezclas ---------- */
+.mixrow{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--rule-soft)}
+.mixchips{display:flex;height:38px;border:1px solid var(--rule)}
+.mixchips i{flex:1}
+.mixname{font-size:16px}
+.mixmeta{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- foto ---------- */
+.drop{border:1px dashed var(--rule);background:var(--paper-2);padding:34px 20px;text-align:center}
+.drop p{margin:0 0 14px;color:var(--muted);font-size:15px}
+#preview{max-width:100%;max-height:300px;display:block;margin:18px auto 0;border:1px solid var(--rule)}
+.recipe{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule-soft)}
+.recipe .sw{height:44px;border:1px solid var(--rule)}
+
+footer{margin:56px 0 40px;padding-top:18px;border-top:1px solid var(--rule);
+  font-family:var(--sans);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer .sig{font-family:var(--serif);font-size:16px;color:var(--ink);font-style:italic}
+@media (prefers-reduced-motion:no-preference){.card,.wash i{transition:border-color .15s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1 class="brand">Pigmenta</h1>
+  <p class="byline">Una herramienta de las clases de acuarela de Vicente García Fuentes</p>
+  <p class="lede">Qué hay dentro de cada tubo, qué marca lleva el mismo pigmento y qué pasa cuando los mezclas.</p>
+
+  <div style="height:34px"></div>
+  <div class="washes" id="washes" role="group" aria-label="Ir a un pigmento"></div>
+  <div class="codes" id="codes" hidden></div>
+  <div class="herobar">
+    <p class="washes-cap" id="hero-cap">Cada franja es un pigmento. Pulsa para abrir su ficha.</p>
+    <div class="viewtoggle" role="group" aria-label="Cómo ver el índice">
+      <button id="v-color" aria-pressed="true">Por color</button>
+      <button id="v-code" aria-pressed="false">Por numeración</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="pigmentos" aria-selected="true">Pigmentos</button>
+  <button role="tab" data-tab="tubos" aria-selected="false">Tubos por marca</button>
+  <button role="tab" data-tab="caja" aria-selected="false">Mi caja</button>
+  <button role="tab" data-tab="mezclas" aria-selected="false">Mezclas</button>
+  <button role="tab" data-tab="foto" aria-selected="false">Qué colores uso</button>
+  <button role="tab" data-tab="paletas" aria-selected="false">Paletas de pintores</button>
+</nav>
+
+<section id="tab-pigmentos">
+  <div class="controls">
+    <input type="search" id="q-pig" placeholder="Escribe un código (PO20, PB15:3) o un nombre" aria-label="Buscar pigmento">
+    <select id="f-fam" aria-label="Familia"><option value="">Todas las familias</option></select>
+    <label class="chk"><input type="checkbox" id="f-fug"> Ocultar los poco sólidos a la luz</label>
+  </div>
+  <p class="hits" id="hits-pig"></p>
+  <div class="grid" id="grid-pig"></div>
+</section>
+
+<section id="tab-tubos" hidden>
+  <div class="banner" id="verify-banner"></div>
+  <div class="controls">
+    <input type="search" id="q-tubo" placeholder="Escribe un código (PO20), una marca o un nombre" aria-label="Buscar tubo">
+    <select id="f-marca" aria-label="Marca"><option value="">Todas las marcas</option></select>
+    <select id="f-fam2" aria-label="Familia"><option value="">Todas las familias</option></select>
+    <label class="chk"><input type="checkbox" id="f-mono"> Solo un pigmento</label>
+  </div>
+  <p class="hits" id="hits-tubo"></p>
+  <div class="grid" id="grid-tubo"></div>
+</section>
+
+<section id="tab-caja" hidden>
+  <div class="controls">
+    <input type="search" id="q-caja" placeholder="Buscar para añadir a la caja" aria-label="Buscar para añadir">
+    <select id="f-marca2" aria-label="Marca"><option value="">Todas las marcas</option></select>
+    <button class="btn ghost" id="clear-box">Vaciar la caja</button>
+  </div>
+  <div class="analysis" id="box-analysis"></div>
+  <div class="boxgrid" id="box-list"></div>
+</section>
+
+<section id="tab-mezclas" hidden>
+  <div id="mix-out"></div>
+</section>
+
+<section id="tab-foto" hidden>
+  <div class="drop">
+    <p>Sube una foto y te digo con qué colores se pinta y en qué proporción. Si has marcado tu caja, las recetas salen con tus tubos; si no, con una paleta de referencia.</p>
+    <input type="file" id="file" accept="image/*" style="display:none">
+    <button class="btn" id="pick">Elegir foto</button>
+    <button class="btn ghost" id="demo">Ver un ejemplo</button>
+    <p style="margin:14px 0 0;font-size:13.5px">También puedes arrastrar la foto aquí o pegarla con Ctrl+V.</p>
+    <div id="photo-status" style="font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:12px"></div>
+    <img id="preview" alt="" hidden>
+  </div>
+  <div id="photo-out"></div>
+</section>
+
+<section id="tab-paletas" hidden>
+  <div id="paletas-out"></div>
+</section>
+
+<footer>
+  <div class="sig">Una herramienta de las clases de acuarela de Vicente García Fuentes</div>
+  <div>Datos orientativos. Contrasta siempre con la carta oficial del fabricante.</div>
+</footer>
+</div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true">
+  <div class="sheet-inner" style="position:relative">
+    <button class="close" id="sheet-close" aria-label="Cerrar">×</button>
+    <div class="sheet-wash" id="sheet-wash"></div>
+    <div class="sheet-pad" id="sheet-body"></div>
+  </div>
+</div>
+<script>
+/* ============================================================
+   DATOS
+   P = pigmentos.  [código, nombre, familia, hex, transparencia(0-3),
+       granulación(0-3), tinción(0-3), solidez(I/II/III), nota]
+   ============================================================ */
+const FAMILIAS = ["Amarillos","Naranjas","Rojos","Violetas","Azules","Verdes","Tierras","Negros y grises","Blancos"];
+
+const P = [
+["PY3","Amarillo Hansa claro","Amarillos","#FBE55A",2,0,1,"II","Frío y limpio, casi limón. Su solidez es media: en aguadas muy diluidas y a plena luz puede perder fuerza con los años."],
+["PY97","Amarillo Hansa medio","Amarillos","#FCC530",2,0,1,"I","El amarillo neutro de trabajo. Ni tira a verde ni a naranja, así que sirve para verdes y para naranjas por igual."],
+["PY150","Amarillo níquel azo","Amarillos","#E8B23A",3,0,2,"I","Muy transparente y algo apagado. Es la base de casi todos los «quinacridone gold» actuales, ahora que el pigmento original ya no se fabrica."],
+["PY154","Amarillo benzimidazolona","Amarillos","#FBC12B",2,0,1,"I","Amarillo moderno muy sólido, buen sustituto de los cadmios sin la opacidad."],
+["PY175","Amarillo benzimidazolona limón","Amarillos","#F7E24A",2,0,1,"I","El limón sólido. Con ftalo azul da los verdes más eléctricos."],
+["PY35","Amarillo cadmio","Amarillos","#FFC81E",0,0,0,"I","Opaco y cubriente. En acuarela tapa el papel, que es justo lo contrario de lo que suele buscarse."],
+["PY37","Amarillo cadmio oscuro","Amarillos","#FCB412",0,0,0,"I","Como el anterior pero más denso y anaranjado."],
+["PY40","Aureolina","Amarillos","#F2CE49",3,0,0,"II","Amarillo de cobalto. Precioso y transparente, pero de solidez discutida y caro."],
+["PY110","Amarillo isoindolinona","Amarillos","#EFA92A",2,0,1,"I","Amarillo cálido intenso, tirando a albaricoque."],
+["PY129","Verde dorado","Amarillos","#A79A2A",3,0,2,"I","Amarillo verdoso transparente. Muy útil para follaje sin recurrir a mezclas."],
+["PY42","Ocre amarillo sintético","Tierras","#C9973F",0,1,0,"I","Óxido de hierro fabricado: más uniforme y limpio que el natural, y menos interesante."],
+["PY43","Ocre amarillo natural","Tierras","#C69A4E",0,2,0,"I","Tierra de yacimiento. Granula con suavidad y da esa textura de piedra que el sintético no tiene."],
+
+["PO20","Naranja cadmio","Naranjas","#F5761D",0,0,0,"I","Opaco y potente."],
+["PO62","Naranja benzimidazolona","Naranjas","#F5852E",2,0,1,"I","Naranja moderno, limpio y sólido."],
+["PO71","Naranja pirrol","Naranjas","#E85C21",3,0,2,"I","Naranja transparente muy fuerte. Con muy poco ya tienes el tono."],
+["PO73","Rojo naranja pirrol","Naranjas","#E64A19",3,0,2,"I","Entre el naranja y el rojo, transparente."],
+["PO48","Quinacridona oro marrón","Naranjas","#A85A22",3,0,2,"I","Descatalogado. Casi todas las marcas lo sustituyen ya por mezclas, así que dos tubos con el mismo nombre pueden no llevar lo mismo."],
+["PO49","Quinacridona oro","Naranjas","#B4691F",3,0,2,"II","Descatalogado. Mismo aviso que el anterior."],
+
+["PR108","Rojo cadmio","Rojos","#D8281F",0,0,0,"I","El rojo opaco clásico. Cubre y no se levanta bien."],
+["PR254","Rojo pirrol","Rojos","#D82B22",1,0,2,"I","El sustituto moderno del cadmio: mismo tono, más transparencia."],
+["PR255","Escarlata pirrol","Rojos","#E2402A",2,0,2,"I","Rojo cálido tirando a naranja. Excelente para tejados y ladrillo."],
+["PR188","Escarlata naftol","Rojos","#DE3B2C",2,0,2,"II","Buen tono, solidez algo menor que los pirrol."],
+["PR179","Marrón perileno","Rojos","#7E2A24",2,0,2,"I","Rojo muy oscuro, casi negro en masa. Con ftalo verde da negros hermosos."],
+["PR206","Quinacridona marrón","Rojos","#8E2E22",3,0,2,"I","Rojo terroso transparente, muy usado para sombras cálidas."],
+["PR209","Quinacridona roja","Rojos","#C8305A",3,0,3,"I","Rojo frío transparente, tiñe bastante."],
+["PR122","Quinacridona magenta","Rojos","#C82580",3,0,3,"I","El magenta de referencia. Con ftalo azul llega a violetas imposibles de mezclar de otro modo."],
+["PR83","Alizarina carmesí","Rojos","#9E1F35",3,0,2,"III","Fugitivo. Es el clásico que conviene evitar en obra que vaya a colgarse: se apaga con los años. Busca las versiones «permanente», que son mezclas."],
+["PR101","Óxido de hierro sintético","Tierras","#9E4433",0,1,0,"I","La familia de los rojos indios y venecianos, y de muchas sienas tostadas modernas."],
+["PR102","Tierra roja natural","Tierras","#A2503A",0,2,0,"I","Versión de yacimiento: granula más y varía según la marca."],
+
+["PV19","Quinacridona rosa","Violetas","#D0356F",3,0,3,"I","Según la forma cristalina, el mismo código sale rosa o violeta. Por eso «Permanent Rose» y «Quinacridone Violet» comparten pigmento y no se parecen."],
+["PV23","Violeta dioxazina","Violetas","#5B2C82",3,0,3,"II","Violeta potentísimo. En capa muy fina y a plena luz puede aclararse."],
+["PV15","Violeta ultramar","Violetas","#6F5FA8",2,3,0,"I","Granula mucho. Precioso en cielos y sombras de nieve."],
+["PV16","Violeta manganeso","Violetas","#7B4C93",2,2,0,"I","Granula y se levanta bien del papel."],
+["PV49","Violeta cobalto","Violetas","#8C5BA3",1,2,0,"I","Delicado, caro y poco potente. Se usa por su granulación, no por su fuerza."],
+
+["PB29","Ultramar","Azules","#2A4A9E",2,3,0,"I","El azul cálido de siempre. Granulación gruesa y bonita, y la base de la mayoría de los grises de paisaje."],
+["PB15:3","Ftalo azul tono verde","Azules","#0F73B4",3,0,3,"I","Poder tintóreo altísimo: una punta de pincel tiñe toda la aguada y ya no hay marcha atrás."],
+["PB15:6","Ftalo azul tono rojo","Azules","#12448F",3,0,3,"I","Más frío y profundo que el anterior. Igual de dominante."],
+["PB60","Azul indantreno","Azules","#23386E",3,0,2,"I","Azul oscuro transparente, muy sólido. Buen sustituto del índigo."],
+["PB28","Azul cobalto","Azules","#2A55A8",1,2,0,"I","Azul de cielo por excelencia. Poco potente, granula, y no ensucia las mezclas."],
+["PB35","Azul cerúleo","Azules","#3E8DBF",0,2,0,"I","Opaco y granulado, con un punto lechoso muy útil en cielos bajos."],
+["PB36","Cerúleo cromo o turquesa cobalto","Azules","#2C8CA6",1,2,0,"I","Más verdoso y más limpio que el cerúleo normal."],
+["PB27","Azul de Prusia","Azules","#123A56",3,0,3,"II","Tiñe muchísimo y domina cualquier mezcla. Puede virar en contacto con álcalis."],
+["PB33","Azul manganeso","Azules","#2E9BC4",2,3,0,"I","Descatalogado. Granulación espectacular; las versiones actuales son imitaciones."],
+
+["PG7","Ftalo verde tono azul","Verdes","#0B6B4F",3,0,3,"I","Verde eléctrico, casi imposible de usar puro. Con rojos terrosos da los mejores negros y grises."],
+["PG36","Ftalo verde tono amarillo","Verdes","#197A45",3,0,3,"I","Más cálido que el anterior, igual de fuerte."],
+["PG18","Viridian","Verdes","#2E8163",2,2,0,"I","Verde granulado y discreto. Nada que ver con el ftalo pese al parecido del tono."],
+["PG17","Óxido de cromo","Verdes","#4A7A4C",0,1,0,"I","Verde opaco y apagado, de uso militar y de paisaje seco."],
+["PG50","Verde cobalto turquesa","Verdes","#2FA79B",1,1,0,"I","Turquesa opaco y luminoso, muy usado en agua de mar."],
+["PG23","Tierra verde","Verdes","#6E7E5E",1,2,0,"I","Verde grisáceo suave, tradicional para veladuras de carnación."],
+
+["PBr7","Tierras naturales, crudas y calcinadas","Tierras","#8A5A32",1,2,0,"I","Sienas y sombras. Su tono depende del yacimiento y del tueste, no solo del código: dos PBr7 de marcas distintas pueden ser muy diferentes."],
+
+["PBk6","Negro humo","Negros y grises","#2B2B2A",1,0,2,"I","Negro frío y tintóreo."],
+["PBk7","Negro carbón","Negros y grises","#262523",1,0,2,"I","Negro neutro, el más común en mezclas comerciales."],
+["PBk9","Negro marfil","Negros y grises","#2A2724",1,0,1,"I","Ligeramente cálido, menos agresivo en mezcla."],
+["PBk11","Negro marte","Negros y grises","#262424",0,2,0,"I","Granula y sedimenta. Es el responsable de los grises con textura lunar."],
+["PBk19","Gris pizarra","Negros y grises","#7E7D74",1,2,0,"I","Gris claro granulado, base de los Davy's Grey."],
+
+["PV55","Quinacridona púrpura","Violetas","#8E3170",3,0,3,"I","Púrpura transparente moderno, entre la quinacridona magenta y el violeta."],
+["PR149","Rojo perileno","Rojos","#C2352C",2,0,2,"I","Rojo profundo y sólido, algo más frío que los pirrol."],
+["PY151","Amarillo benzimidazolona (151)","Amarillos","#F5C22B",2,0,1,"I","Amarillo medio transparente y muy sólido."],
+["PY180","Amarillo benzimidazolona verdoso","Amarillos","#EBC63C",2,0,1,"I","Amarillo cálido apagado, muy usado en lacas amarillas modernas."],
+["PY139","Amarillo isoindolinona (139)","Amarillos","#E9A821",1,0,1,"I","Amarillo profundo, casi ámbar."],
+["PY83","Amarillo diarilida","Amarillos","#D99A20",3,0,2,"II","El amarillo indio moderno. Muy transparente; su solidez es buena pero no de las mejores."],
+["PO36","Naranja benzimidazolona (36)","Naranjas","#EE7A22",2,0,1,"I","Naranja limpio y sólido."],
+["PO34","Naranja pirazolona","Naranjas","#EF6A1E",2,0,2,"I","Naranja intenso; la solidez depende mucho del fabricante."],
+["PR112","Rojo naftol AS","Rojos","#DE3527",2,0,2,"II","Rojo cálido brillante, de solidez buena pero no excelente."],
+["PR170","Rojo naftol (170)","Rojos","#D9382F",2,0,2,"I","Rojo de laca escarlata, algo más frío que el pirrol."],
+["PR264","Carmesí pirrol","Rojos","#B4232E",3,0,2,"I","El carmesí moderno que sustituye a la alizarina sin su problema de solidez."],
+["PR177","Rojo antraquinona","Rojos","#B02334",3,0,2,"I","Rojo profundo transparente, muy limpio en veladura."],
+["PR233","Rosa de alfarero","Rojos","#C9A0A4",1,2,0,"I","Rosa terroso y granulado, débil pero inconfundible. Precioso para grises cálidos."],
+["NR9","Rubia genuina","Rojos","#B7414F",3,0,1,"III","Laca natural de raíz de rubia. Bellísima y fugitiva: se apaga con la luz."],
+["PV14","Violeta de cobalto (fosfato)","Violetas","#8E5CA6",1,2,0,"I","Granula y es poco potente. Se usa por la textura, no por la fuerza."],
+["PBr8","Pardo de manganeso","Tierras","#5E4A2E",1,2,0,"I","Marrón de un solo pigmento, verdoso al diluir. Poco común: casi todos los Van Dyke son mezclas."],
+["PY53","Amarillo níquel titanato","Amarillos","#EFD98A",1,2,0,"I","Amarillo pálido opaco y granulado, base de los tonos cadmio sin cadmio."],
+["PY65","Amarillo arilida RN","Amarillos","#F6A81E",2,0,1,"I","Amarillo cálido intenso."],
+["PY138","Amarillo quinoftalona","Amarillos","#F2D22A",2,0,1,"II","Amarillo verdoso muy limpio."],
+["PY184","Amarillo vanadato de bismuto","Amarillos","#FBD429",0,0,1,"I","Opaco y luminoso, el sustituto moderno del cadmio limón."],
+["PY223","Amarillo maya","Amarillos","#E8B93C",3,0,0,"II","Pigmento híbrido inspirado en el azul maya."],
+["PO43","Naranja perinona","Naranjas","#E85F1B",2,0,3,"I","Naranja muy tintóreo: mancha el papel."],
+["PR168","Escarlata antraquinona","Rojos","#DC3A2A",3,0,1,"I","Escarlata transparente que se levanta bien."],
+["PR175","Rojo benzimidazolona","Rojos","#C4302C",2,0,2,"I","Rojo profundo moderno."],
+["PR171","Marrón benzimidazolona","Rojos","#7C3427",2,0,1,"I","Granate apagado."],
+["PR176","Carmín benzimidazolona","Rojos","#A82242",2,0,3,"II","Carmín intenso; tiñe mucho."],
+["PR178","Rojo perileno","Rojos","#C22C2F",2,0,2,"I","Rojo frío de la familia perileno."],
+["PR202","Quinacridona fucsia","Rojos","#B9256B",3,0,2,"I","Entre el magenta y el violeta, muy transparente."],
+["PR287","Rojo maya","Rojos","#B93A3C",3,2,1,"II","Pigmento híbrido, granula."],
+["PV29","Violeta perileno","Violetas","#6B3550",3,0,2,"I","Violeta oscuro y sobrio, excelente para sombras."],
+["PV32","Burdeos benzimidazolona","Violetas","#8C2E4A",2,0,2,"II","Burdeos profundo."],
+["PV42","Rosa quinacridona","Violetas","#D64F8E",3,0,1,"II","Rosa claro transparente."],
+["PV58","Violeta maya","Violetas","#6E3C7E",3,2,1,"II","Pigmento híbrido violeta, con granulación."],
+["PB15","Azul ftalo (sin matiz declarado)","Azules","#0E63A8",3,0,3,"I","Ftalo genérico: según el lote tira a verdoso o a rojizo."],
+["PB16","Ftalo turquesa sin metal","Azules","#0F8FA8",3,0,3,"I","Turquesa profundo y muy tintóreo."],
+["PB82","Azul maya","Azules","#2B6FA8",2,0,1,"II","Pigmento híbrido inorgánico-orgánico."],
+["PG19","Verde cobalto pálido","Verdes","#6FB88E",3,2,0,"I","Verde suave y granulado."],
+["PBk10","Grafito","Negros y grises","#4A4A4C",0,0,1,"I","Gris grafito con brillo metálico leve."],
+["PBk31","Verde perileno","Verdes","#2C3A2C",2,0,2,"I","Verde casi negro. Con rojos cálidos da oscuros muy ricos."],
+["PBr6","Óxido de hierro reciclado","Tierras","#7A5230",2,2,0,"I","Tierra sintética recuperada; granula."],
+["PBr11","Ferrita de magnesio","Tierras","#9C7042",3,2,0,"I","Sedimenta con fuerza: es el pigmento de los efectos lunares."],
+["PBr25","Marrón benzimidazolona","Tierras","#7E4A24",3,0,2,"I","Marrón transparente moderno, limpio en mezcla."],
+["PW20","Mica","Blancos","#D8D4CB",3,2,0,"I","Mineral nacarado. Da brillo, no color."],
+["PY153","Amarillo níquel dioxina","Amarillos","#EFB52A",2,0,1,"I","Amarillo cálido descatalogado como pigmento; queda en stocks antiguos."],
+["PY155","Amarillo bisacetoacetarilida","Amarillos","#F7DA3E",2,0,1,"I","Amarillo limpio de la química moderna."],
+["PY216","Amarillo de estaño y cinc","Amarillos","#E3B84E",0,2,0,"I","Amarillo opaco y granulado, tipo Turner."],
+["PV62","Violeta hue","Violetas","#7E4E9E",2,1,1,"I","Sustituto sin cobalto del violeta de cobalto."],
+["PB66","Índigo sintético","Azules","#1E3A5C",2,0,2,"II","El índigo moderno de tina."],
+["PB74","Azul cobalto oscuro","Azules","#1E3E8E",1,2,0,"I","Cobalto profundo, granula."],
+["PB15:1","Azul ftalo estabilizado","Azules","#0E5FA6",3,0,3,"I","Variante del ftalo, algo más rojiza que la 15:3."],
+["PW5","Blanco de litopón","Blancos","#F4F3EE",0,0,0,"I","Blanco opaco de carga, usado en tonos pastel."],
+["PY119","Amarillo espinela de cinc y hierro","Amarillos","#C08A3A",0,2,0,"I","Amarillo pardo opaco que granula."],
+["PY159","Amarillo de circonio","Amarillos","#D8B45A",0,2,0,"I","Pigmento cerámico muy granulante, base de varios supergranulantes."],
+["PR242","Rojo azoico de condensación","Rojos","#D9342C",2,0,2,"I","Escarlata moderno sólido."],
+["PR207","Quinacridona escarlata","Rojos","#CE3730",3,0,2,"I","Quinacridona del lado cálido."],
+["PR144","Rojo azoico de condensación (144)","Rojos","#B62C2A",2,0,2,"I","Rojo profundo transparente."],
+["PR83:1","Laca de alizarina","Rojos","#9A2138",3,0,2,"III","Versión en laca de la alizarina. Igual de poco sólida."],
+["PR48:4","Rojo naftol en laca de manganeso","Rojos","#C22E44",2,0,2,"II","Laca roja de solidez media."],
+["PBr24","Titanato de cromo y antimonio","Tierras","#C39A4A",0,2,0,"I","El ocre de titanio: opaco, luminoso y granulado."],
+["PBr33","Espinela de cinc, hierro y cromo","Tierras","#7A4A32",0,2,0,"I","Marrón cerámico muy granulante."],
+["PBr41","Óxido de hierro transparente","Tierras","#8E4E22",3,0,1,"I","Tierra transparente, ideal para veladuras cálidas."],
+["PG8","Verde nitroso (Hooker)","Verdes","#4C6B3A",3,0,1,"III","Verde histórico de Hooker. Poco sólido: se pardea."],
+["PG26","Verde de cobalto oscuro","Verdes","#1E6E5E",0,2,0,"I","Verde de cobalto profundo, opaco y granulado."],
+["PR9","Rojo naftol AS (9)","Rojos","#D33A2E",2,0,2,"II","Rojo naranja de laca, solidez media."],
+["PR23","Rojo naftol AS (23)","Rojos","#B5303E",2,0,2,"II","Carmesí de laca usado en gamas asiáticas."],
+["PR48:1","Rojo naftol en laca de bario","Rojos","#CE2F3E",2,0,2,"II","Laca roja económica; solidez limitada."],
+["PO16","Naranja diarilida","Naranjas","#E2701E",2,0,2,"II","Naranja de laca, sustituto del bermellón."],
+["PB1","Azul Victoria (laca)","Azules","#1E7FC4",3,0,3,"III","Colorante en laca. Muy brillante y muy fugitivo: se va con la luz."],
+["PBk8","Negro vegetal","Negros y grises","#2E2B26",1,1,1,"I","Negro de carbón vegetal, algo más cálido y granulado que el de humo."],
+["PO64","Naranja benzimidazolona (64)","Naranjas","#EE8524",2,0,1,"I","Naranja moderno sólido."],
+["PO13","Naranja pirazolona (13)","Naranjas","#F07326",2,0,2,"III","Naranja de laca poco sólido: se apaga."],
+["PR12","Rojo naftol (12)","Rojos","#C9333C",2,0,2,"III","Laca roja fugitiva."],
+["PR187","Rojo naftol (187)","Rojos","#B22F35",2,0,2,"II","Rojo profundo de laca, solidez media."],
+["PY109","Amarillo isoindolinona verdoso","Amarillos","#F2D733",2,0,1,"I","Amarillo limon moderno, muy solido."],
+["PY168","Amarillo azoico (168)","Amarillos","#F0BE30",1,0,1,"II","Amarillo calido; solidez muy buena, no maxima."],
+["PY61","Amarillo arilida en laca de calcio","Amarillos","#F5D93F",0,0,1,"II","Amarillo limon opaco."],
+["PY108","Amarillo antrapirimidina","Amarillos","#E0A82A",3,0,1,"I","El amarillo indio moderno: transparente y muy solido."],
+["PY128","Amarillo diazo de condensacion","Amarillos","#F2C22C",3,0,1,"I","Amarillo transparente de gran fuerza."],
+["PY74","Amarillo arilida (74)","Amarillos","#F7CE33",2,0,1,"II","Amarillo medio limpio."],
+["PY147","Amarillo antraquinona","Amarillos","#C79A2E",3,0,1,"I","Amarillo apagado transparente, casi oliva."],
+["PY95","Amarillo diazo de condensacion (95)","Amarillos","#E9A72C",3,0,1,"I","Base de las gutagambas modernas."],
+["PO86","Naranja de bismuto","Naranjas","#F0791C",0,0,0,"I","Naranja opaco sin cadmio."],
+["PBr29","Espinela de cromo y hierro","Tierras","#4A3A2E",0,2,0,"I","Marron ceramico muy oscuro que granula."],
+["PR221","Rojo diazo de condensacion","Rojos","#B62A38",2,0,2,"I","Carmin moderno solido."],
+["PW6","Blanco titanio","Blancos","#F7F7F4",0,0,0,"I","Opaco. En acuarela se usa como gouache, no como color."],
+["PW4","Blanco zinc o de China","Blancos","#F5F5F0",1,0,0,"I","Menos cubriente que el titanio; útil para veladuras lechosas."]
+];
+
+/* T = tubos.  [marca, nombre comercial, [códigos de pigmento], verificado(1/0)] */
+const T = [
+["Winsor & Newton","French Ultramarine",["PB29"],1,""],
+["Winsor & Newton","Ultramarine (Green Shade)",["PB29"],1,""],
+["Winsor & Newton","Cobalt Blue",["PB28"],1,""],
+["Winsor & Newton","Cerulean Blue",["PB35"],1,""],
+["Winsor & Newton","Winsor Blue (Green Shade)",["PB15:3"],1,""],
+["Winsor & Newton","Winsor Blue (Red Shade)",["PB15:6"],1,""],
+["Winsor & Newton","Prussian Blue",["PB27"],1,""],
+["Winsor & Newton","Indanthrene Blue",["PB60"],1,""],
+["Winsor & Newton","Winsor Green (Blue Shade)",["PG7"],1,""],
+["Winsor & Newton","Winsor Green (Yellow Shade)",["PG36"],1,""],
+["Winsor & Newton","Viridian",["PG18"],1,""],
+["Winsor & Newton","Cobalt Turquoise Light",["PG50"],1,""],
+["Winsor & Newton","Winsor Lemon",["PY175"],1,""],
+["Winsor & Newton","Winsor Yellow",["PY154"],1,""],
+["Winsor & Newton","Cadmium Yellow",["PY35"],1,""],
+["Winsor & Newton","Yellow Ochre",["PY43"],1,""],
+["Winsor & Newton","Raw Sienna",["PBr7"],1,""],
+["Winsor & Newton","Burnt Sienna",["PBr7"],1,""],
+["Winsor & Newton","Raw Umber",["PBr7"],1,""],
+["Winsor & Newton","Burnt Umber",["PBr7"],1,""],
+["Winsor & Newton","Indian Red",["PR101"],1,""],
+["Winsor & Newton","Venetian Red",["PR101"],1,""],
+["Winsor & Newton","Permanent Rose",["PV19"],1,""],
+["Winsor & Newton","Quinacridone Magenta",["PR122"],1,""],
+["Winsor & Newton","Winsor Red",["PR254"],1,""],
+["Winsor & Newton","Cadmium Red",["PR108"],1,""],
+["Winsor & Newton","Perylene Maroon",["PR179"],1,""],
+["Winsor & Newton","Winsor Violet (Dioxazine)",["PV23"],1,""],
+["Winsor & Newton","Ivory Black",["PBk9"],1,""],
+["Winsor & Newton","New Gamboge",[],0,"Composición sin confirmar."],
+["Winsor & Newton","Scarlet Lake",[],0,"Composición sin confirmar."],
+["Winsor & Newton","Payne's Gray",[],0,"Composición sin confirmar."],
+["Daniel Smith","Alizarin Crimson",["PR83"],1,""],
+["Daniel Smith","Alvaro's Caliente Grey",["PBr7","PB29","PBk6"],1,""],
+["Daniel Smith","Alvaro's Fresco Grey",["PB29","PV15","PW6"],1,""],
+["Daniel Smith","Anthraquinoid Red",["PR177"],1,""],
+["Daniel Smith","Anthraquinoid Scarlet",["PR168"],1,""],
+["Daniel Smith","Aureolin (Cobalt Yellow)",["PY40"],1,""],
+["Daniel Smith","Aussie Red Gold",["PY83","PR101","PV19"],1,""],
+["Daniel Smith","Azo Yellow",["PY151"],1,""],
+["Daniel Smith","Bismuth Vanadate Yellow",["PY184"],1,""],
+["Daniel Smith","Bordeaux",["PV32"],1,""],
+["Daniel Smith","Buff Titanium",["PW6"],1,"La carta lo da como PW6:1, una variante del blanco de titanio."],
+["Daniel Smith","Burgundy Red Ochre",["PR102"],1,""],
+["Daniel Smith","Burgundy Yellow Ochre",["PY43"],1,""],
+["Daniel Smith","Burnt Sienna",["PBr7"],1,""],
+["Daniel Smith","Burnt Sienna Light",["PR101","PO48"],1,""],
+["Daniel Smith","Burnt Umber",["PBr7"],1,""],
+["Daniel Smith","Burnt Yellow Ochre",["PR102"],1,""],
+["Daniel Smith","Cadmium Orange Hue",["PY53","PO73","PY83"],1,""],
+["Daniel Smith","Cadmium Red Medium Hue",["PY53","PR254"],1,""],
+["Daniel Smith","Cadmium Red Scarlet Hue",["PY53","PR254","PY83"],1,""],
+["Daniel Smith","Cadmium Yellow Deep Hue",["PY53","PY83"],1,""],
+["Daniel Smith","Cadmium Yellow Light Hue",["PY53","PY138","PY3"],1,""],
+["Daniel Smith","Cadmium Yellow Medium Hue",["PY53","PY151","PY83"],1,""],
+["Daniel Smith","Carbazole Violet",["PV23"],1,""],
+["Daniel Smith","Carmine",["PR176"],1,""],
+["Daniel Smith","Cascade Green",["PBr7","PB15"],1,""],
+["Daniel Smith","Cerulean Blue",["PB35"],1,""],
+["Daniel Smith","Cerulean Blue Chromium",["PB36"],1,""],
+["Daniel Smith","Chinese White",["PW4"],1,""],
+["Daniel Smith","Chromium Green Oxide",["PG17"],1,""],
+["Daniel Smith","Cobalt Blue",["PB28"],1,""],
+["Daniel Smith","Cobalt Blue Violet",["PB28","PV19"],1,""],
+["Daniel Smith","Cobalt Green",["PG50"],1,""],
+["Daniel Smith","Cobalt Green Pale",["PG19"],1,""],
+["Daniel Smith","Cobalt Teal Blue",["PG50"],1,""],
+["Daniel Smith","Cobalt Turquoise",["PB36"],1,""],
+["Daniel Smith","Cobalt Violet",["PV49"],1,""],
+["Daniel Smith","Cobalt Violet Deep",["PV14"],1,""],
+["Daniel Smith","Deep Sap Green",["PB27","PY3","PO48"],1,""],
+["Daniel Smith","Deep Scarlet",["PR175"],1,""],
+["Daniel Smith","English Red Earth",["PR101"],1,""],
+["Daniel Smith","English Red Ochre",["PR101"],1,""],
+["Daniel Smith","Enviro-Friendly Brown Iron Oxide",["PBr6"],1,""],
+["Daniel Smith","Enviro-Friendly Red Iron Oxide",["PBr6"],1,""],
+["Daniel Smith","Enviro-Friendly Yellow Iron Oxide",["PBr6"],1,""],
+["Daniel Smith","Fired Gold Ochre",["PR102"],1,""],
+["Daniel Smith","French Ochre",["PY43"],1,""],
+["Daniel Smith","French Ultramarine",["PB29"],1,""],
+["Daniel Smith","German Greenish Raw Umber",["PBr7"],1,""],
+["Daniel Smith","Goethite (Brown Ochre)",["PY43"],1,""],
+["Daniel Smith","Graphite Gray",["PBk10"],1,""],
+["Daniel Smith","Gray Titanium",["PW6"],1,""],
+["Daniel Smith","Green Gold",["PY150","PY3","PG36"],1,""],
+["Daniel Smith","Hansa Yellow Deep",["PY65"],1,""],
+["Daniel Smith","Hansa Yellow Light",["PY3"],1,""],
+["Daniel Smith","Hansa Yellow Medium",["PY97"],1,""],
+["Daniel Smith","Hooker's Green",["PG36","PY3","PY150"],1,"La carta corta la lista: puede llevar un cuarto pigmento."],
+["Daniel Smith","Imperial Purple",["PV19","PB29"],1,""],
+["Daniel Smith","Indanthrone Blue",["PB60"],1,""],
+["Daniel Smith","Indian Red",["PR101"],1,""],
+["Daniel Smith","Indian Yellow",["PY97","PY150"],1,""],
+["Daniel Smith","Indigo",["PB60","PBk6"],1,""],
+["Daniel Smith","Isoindoline Yellow",["PY139"],1,""],
+["Daniel Smith","Italian Burnt Sienna",["PBr7"],1,""],
+["Daniel Smith","Italian Deep Ochre",["PY43"],1,""],
+["Daniel Smith","Italian Venetian Red",["PR101"],1,""],
+["Daniel Smith","Ivory Black",["PBk9"],1,""],
+["Daniel Smith","Jane's Grey",["PB29","PBr7"],1,""],
+["Daniel Smith","Joseph Z's Cool Grey",["PB36","PV19","PBk6"],1,""],
+["Daniel Smith","Joseph Z's Neutral Grey",["PB29","PBk9","PBk10"],1,""],
+["Daniel Smith","Joseph Z's Warm Grey",["PY43","PV19","PBk6"],1,""],
+["Daniel Smith","Lamp Black",["PBk6"],1,""],
+["Daniel Smith","Lavender",["PW6","PV15","PB29"],1,""],
+["Daniel Smith","Lemon Yellow",["PY175"],1,""],
+["Daniel Smith","Lunar Black",["PBk11"],1,""],
+["Daniel Smith","Lunar Blue",["PBk11","PB15"],1,""],
+["Daniel Smith","Lunar Earth",["PBr11"],1,""],
+["Daniel Smith","Lunar Red Rock",["PR101"],1,""],
+["Daniel Smith","Lunar Violet",["PV15","PBk11"],1,""],
+["Daniel Smith","Manganese Blue Hue",["PB15"],1,""],
+["Daniel Smith","Mars Yellow",["PY42"],1,""],
+["Daniel Smith","Mayan Dark Blue",["PB82"],1,""],
+["Daniel Smith","Mayan Red",["PR287"],1,""],
+["Daniel Smith","Mayan Violet",["PV58"],1,""],
+["Daniel Smith","Mayan Yellow",["PY223"],1,""],
+["Daniel Smith","Monte Amiata Natural Sienna",["PBr7"],1,""],
+["Daniel Smith","Moonglow",["PG18","PB29","PR177"],1,""],
+["Daniel Smith","Naphthamide Maroon",["PR171"],1,""],
+["Daniel Smith","Naples Yellow",["PW4","PY97","PR101"],1,""],
+["Daniel Smith","Neutral Tint",["PBk6","PV19","PB15"],1,""],
+["Daniel Smith","New Gamboge",["PY97","PY110"],1,""],
+["Daniel Smith","Nickel Azo Yellow",["PY150"],1,""],
+["Daniel Smith","Nickel Titanate Yellow",["PY53"],1,""],
+["Daniel Smith","Olive Green",["PY97","PB29","PBr7"],1,""],
+["Daniel Smith","Opera Pink",["PR122"],1,"Lleva además un pigmento fluorescente. La marca la clasifica como fugitiva."],
+["Daniel Smith","Organic Vermilion",["PR188"],1,""],
+["Daniel Smith","Payne's Blue Gray",["PB60","PBk6"],1,""],
+["Daniel Smith","Payne's Gray",["PB29","PBk9"],1,""],
+["Daniel Smith","Perinone Orange",["PO43"],1,""],
+["Daniel Smith","Permanent Alizarin Crimson",["PR177","PV19","PR149"],1,""],
+["Daniel Smith","Permanent Brown",["PBr25"],1,""],
+["Daniel Smith","Permanent Green",["PY3","PG7"],1,""],
+["Daniel Smith","Permanent Green Light",["PY3","PG7"],1,""],
+["Daniel Smith","Permanent Orange",["PO62"],1,""],
+["Daniel Smith","Permanent Red",["PR170"],1,""],
+["Daniel Smith","Permanent Red Deep",["PR170"],1,""],
+["Daniel Smith","Permanent Violet",["PR202","PB29"],1,""],
+["Daniel Smith","Permanent Yellow Deep",["PY110"],1,""],
+["Daniel Smith","Perylene Green",["PBk31"],1,""],
+["Daniel Smith","Perylene Maroon",["PR179"],1,""],
+["Daniel Smith","Perylene Red",["PR178"],1,""],
+["Daniel Smith","Perylene Scarlet",["PR149"],1,""],
+["Daniel Smith","Perylene Violet",["PV29"],1,""],
+["Daniel Smith","Phthalo Blue (Green Shade)",["PB15:3"],1,""],
+["Daniel Smith","Phthalo Blue (Red Shade)",["PB15:6"],1,""],
+["Daniel Smith","Phthalo Blue Turquoise",["PB16"],1,""],
+["Daniel Smith","Phthalo Green (Blue Shade)",["PG7"],1,""],
+["Daniel Smith","Phthalo Green (Yellow Shade)",["PG36"],1,""],
+["Daniel Smith","Phthalo Turquoise",["PB15:3","PG36"],1,""],
+["Daniel Smith","Phthalo Yellow Green",["PG36","PY3"],1,""],
+["Daniel Smith","Pompeii Red",["PBr7"],1,""],
+["Daniel Smith","Potter's Pink",["PR233"],1,""],
+["Daniel Smith","Prussian Blue",["PB27"],1,""],
+["Daniel Smith","Prussian Green",["PB27","PY97"],1,""],
+["Daniel Smith","Pyrrol Crimson",["PR264"],1,""],
+["Daniel Smith","Pyrrol Orange",["PO73"],1,""],
+["Daniel Smith","Pyrrol Red",["PR254"],1,""],
+["Daniel Smith","Pyrrol Scarlet",["PR255"],1,""],
+["Daniel Smith","Quinacridone Burnt Orange",["PO48"],1,""],
+["Daniel Smith","Quinacridone Burnt Scarlet",["PR206"],1,""],
+["Daniel Smith","Quinacridone Coral",["PR209"],1,""],
+["Daniel Smith","Quinacridone Deep Gold",["PO48","PY150"],1,""],
+["Daniel Smith","Quinacridone Fuchsia",["PR202"],1,""],
+["Daniel Smith","Quinacridone Gold",["PO48","PY150"],1,""],
+["Daniel Smith","Quinacridone Lilac",["PR122"],1,""],
+["Daniel Smith","Quinacridone Magenta",["PR202"],1,""],
+["Daniel Smith","Quinacridone Pink",["PV42"],1,""],
+["Daniel Smith","Quinacridone Purple",["PV55"],1,""],
+["Daniel Smith","Quinacridone Red",["PV19"],1,""],
+["Daniel Smith","Quinacridone Rose",["PV19"],1,""],
+["Daniel Smith","Quinacridone Sienna",["PO48","PY150","PR209"],1,"La carta corta el tercer pigmento; es una quinacridona roja."],
+["Daniel Smith","Quinacridone Violet",["PV19"],1,""],
+["Daniel Smith","Quinophthalone Yellow",["PY138"],1,""],
+["Daniel Smith","Raw Sienna",["PBr7"],1,""],
+["Daniel Smith","Raw Sienna Light",["PY42"],1,""],
+["Daniel Smith","Raw Umber",["PBr7"],1,""],
+["Daniel Smith","Raw Umber Violet",["PBr7","PV19"],1,""],
+["Daniel Smith","Rich Green Gold",["PY129"],1,""],
+["Daniel Smith","Roasted French Ochre",["PR102"],1,""],
+["Daniel Smith","Rose Madder Permanent",["PR209","PV19","PR202"],1,""],
+["Daniel Smith","Rose of Ultramarine",["PB29","PV19"],1,""],
+["Daniel Smith","Sap Green",["PO48","PY150","PG7"],1,""],
+["Daniel Smith","Sepia",["PBr7","PBk9"],1,""],
+["Daniel Smith","Shadow Violet",["PO73","PB29","PG18"],1,""],
+["Daniel Smith","Spring Green",["PY53","PG36","PY151"],1,""],
+["Daniel Smith","Terre Ercolano",["PBr7","PR101"],1,""],
+["Daniel Smith","Terre Verte",["PG18","PBr7"],1,""],
+["Daniel Smith","Titanium White",["PW6"],1,""],
+["Daniel Smith","Transparent Brown Oxide",["PR101"],1,""],
+["Daniel Smith","Transparent Pyrrol Orange",["PO71"],1,""],
+["Daniel Smith","Transparent Red Oxide",["PR101"],1,""],
+["Daniel Smith","Transparent Yellow Oxide",["PY42"],1,""],
+["Daniel Smith","Ultramarine Blue",["PB29"],1,""],
+["Daniel Smith","Ultramarine Red",["PV15"],1,""],
+["Daniel Smith","Ultramarine Turquoise",["PB29","PG7"],1,""],
+["Daniel Smith","Ultramarine Violet",["PV15"],1,""],
+["Daniel Smith","Undersea Green",["PB29","PO48","PY150"],1,""],
+["Daniel Smith","Van Dyck Brown",["PBr7"],1,""],
+["Daniel Smith","Venetian Red",["PR101"],1,""],
+["Daniel Smith","Verditer Blue",["PB28","PB36","PW4"],1,""],
+["Daniel Smith","Verona Gold Ochre",["PY43"],1,""],
+["Daniel Smith","Viridian",["PG18"],1,""],
+["Daniel Smith","Wisteria",["PW6","PR122"],1,""],
+["Daniel Smith","Yellow Ochre",["PY43"],1,""],
+["Daniel Smith","Amazonite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Amethyst Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Black Tourmaline Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Bloodstone Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Blue Apatite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Bronzite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Burnt Bronzite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Burnt Tiger's Eye Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Diopside Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Fuchsite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Garnet Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Green Apatite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Hematite Burnt Scarlet Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Hematite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Hematite Violet Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Jadeite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Kingman Green Turquoise Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Kyanite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Lapis Lazuli Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Mayan Blue Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Minnesota Pipestone Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Mummy Bauxite",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Piemontite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Purpurite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Rare Green Earth",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Red Fuchsite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Red Jasper Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Rhodonite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Sedona Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Serpentine Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Sicklerite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Sleeping Beauty Turquoise Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Sodalite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Sugilite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Tiger's Eye Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Yavapai Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Daniel Smith","Zoisite Genuine",[],0,"Mineral molido de la gama PrimaTek: no tiene código de pigmento."],
+["Schmincke Horadam","Titanium opaque white",["PW6"],1,"N.º 101 · solidez ★★★★★"],
+["Schmincke Horadam","Permanent Chinese white",["PW4"],1,"N.º 102 · solidez ★★★★★"],
+["Schmincke Horadam","Rutile yellow",["PY53"],1,"N.º 205 · solidez ★★★★"],
+["Schmincke Horadam","Titanium yellow",["PY53"],1,"N.º 206 · solidez ★★★★"],
+["Schmincke Horadam","Vanadium yellow",["PY184"],1,"N.º 207 · solidez ★★★★"],
+["Schmincke Horadam","Aureolin hue",["PY151"],1,"N.º 208 · solidez ★★★★"],
+["Schmincke Horadam","Transparent yellow",["PY150"],1,"N.º 209 · solidez ★★★★"],
+["Schmincke Horadam","Chromium yellow hue lemon",["PY175"],1,"N.º 211"],
+["Schmincke Horadam","Chromium yellow hue light",["PY153","PY155"],1,"N.º 212"],
+["Schmincke Horadam","Chromium yellow hue deep",["PY65"],1,"N.º 213"],
+["Schmincke Horadam","Chromium orange hue",["PO62"],1,"N.º 214 · solidez ★★★★"],
+["Schmincke Horadam","Lemon yellow",["PY3"],1,"N.º 215 · solidez ★★★"],
+["Schmincke Horadam","Pure yellow",["PY154"],1,"N.º 216 · solidez ★★★★"],
+["Schmincke Horadam","Quinacridone gold hue",["PY150","PR101"],1,"N.º 217 · solidez ★★★★"],
+["Schmincke Horadam","Transparent orange",["PO71"],1,"N.º 218 · solidez ★★★"],
+["Schmincke Horadam","Turner's yellow",["PY216"],1,"N.º 219 · solidez ★★★★"],
+["Schmincke Horadam","Indian yellow",["PY110","PY154"],1,"N.º 220 · solidez ★★★★"],
+["Schmincke Horadam","Jaune brilliant dark",["PW6","PY53","PBr24"],1,"N.º 221 · solidez ★★★★"],
+["Schmincke Horadam","Yellow orange",["PY110"],1,"N.º 222 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium yellow lemon",["PY35"],1,"N.º 223 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium yellow light",["PY35"],1,"N.º 224 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium yellow middle",["PY35"],1,"N.º 225"],
+["Schmincke Horadam","Cadmium yellow deep",["PY35","PO20"],1,"N.º 226 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium orange light",["PO20"],1,"N.º 227 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium orange deep",["PO20"],1,"N.º 228 · solidez ★★★★"],
+["Schmincke Horadam","Naples yellow",["PW6","PY53","PBr24"],1,"N.º 229 · solidez ★★★★"],
+["Schmincke Horadam","Naples yellow reddish",["PW4","PW6","PY42","PR242"],1,"N.º 230 · solidez ★★★★"],
+["Schmincke Horadam","Geranium red",["PR242"],1,"N.º 341 · solidez ★★★"],
+["Schmincke Horadam","Vermilion light",["PR188"],1,"N.º 342 · solidez ★★★"],
+["Schmincke Horadam","Quinacridone red light",["PR207"],1,"N.º 343 · solidez ★★★★"],
+["Schmincke Horadam","Perylene dark red",["PR178"],1,"N.º 344 · solidez ★★★★"],
+["Schmincke Horadam","Ruby red deep",["PR264"],1,"N.º 346 · solidez ★★★"],
+["Schmincke Horadam","Cadmium red middle",["PR108"],1,"N.º 347"],
+["Schmincke Horadam","Cadmium red orange",["PO20"],1,"N.º 348 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium red light",["PR108"],1,"N.º 349 · solidez ★★★★"],
+["Schmincke Horadam","Cadmium red deep",["PR108"],1,"N.º 350 · solidez ★★★★"],
+["Schmincke Horadam","Ruby red",["PV19"],1,"N.º 351 · solidez ★★★★"],
+["Schmincke Horadam","Magenta",["PV42"],1,"N.º 352 · solidez ★★★"],
+["Schmincke Horadam","Permanent carmine",["PV19"],1,"N.º 353 · solidez ★★★★"],
+["Schmincke Horadam","Madder red dark",["PV19","PR179"],1,"N.º 354 · solidez ★★★★"],
+["Schmincke Horadam","Transparent red deep",["PR144"],1,"N.º 355 · solidez ★★★"],
+["Schmincke Horadam","Rose madder",["PR83:1","PR48:4"],1,"N.º 356 · solidez ★★"],
+["Schmincke Horadam","Alizarin crimson",["PR83"],1,"N.º 357 · solidez ★"],
+["Schmincke Horadam","Madder lake deep",["PR179"],1,"N.º 358 · solidez ★★"],
+["Schmincke Horadam","Saturn red",["PR242"],1,"N.º 359 · solidez ★★★★"],
+["Schmincke Horadam","Permanent red orange",["PO62","PR255"],1,"N.º 360 · solidez ★★★★"],
+["Schmincke Horadam","Permanent red",["PR255"],1,"N.º 361 · solidez ★★★★"],
+["Schmincke Horadam","Permanent red deep",["PR254"],1,"N.º 362"],
+["Schmincke Horadam","Scarlet red",["PR242"],1,"N.º 363 · solidez ★★★★"],
+["Schmincke Horadam","Perylene maroon",["PR179"],1,"N.º 364 · solidez ★★★★"],
+["Schmincke Horadam","Quinacridone red",["PR209"],1,"N.º 365"],
+["Schmincke Horadam","Quinacridone magenta",["PR202"],1,"N.º 366 · solidez ★★★★"],
+["Schmincke Horadam","Purple magenta",["PR122"],1,"N.º 367 · solidez ★★★"],
+["Schmincke Horadam","Quinacridone rose",["PV19"],1,"N.º 368"],
+["Schmincke Horadam","Quinacridone red violet",["PV19"],1,"N.º 369"],
+["Schmincke Horadam","Potter's pink",["PR233"],1,"N.º 370"],
+["Schmincke Horadam","Perylene violet",["PV29"],1,"N.º 371 · solidez ★★★★"],
+["Schmincke Horadam","Quinacridone purple",["PV55"],1,"N.º 472 · solidez ★★★★"],
+["Schmincke Horadam","Cobalt violet hue",["PV62"],1,"N.º 473 · solidez ★★★★ · granula"],
+["Schmincke Horadam","Manganese violet",["PV16"],1,"N.º 474 · solidez ★★★★ · granula"],
+["Schmincke Horadam","Helio turquoise",["PB16"],1,"N.º 475"],
+["Schmincke Horadam","Schmincke violet",["PV23"],1,"N.º 476 · solidez ★★"],
+["Schmincke Horadam","Phthalo sapphire blue",["PB15:6"],1,"N.º 477 · solidez ★★★★"],
+["Schmincke Horadam","Helio cerulean",["PB15:3"],1,"N.º 479"],
+["Schmincke Horadam","Mountain blue",["PB29","PG7","PW5"],1,"N.º 480 · solidez ★★★★"],
+["Schmincke Horadam","Cerulean blue tone",["PW4","PB15:3"],1,"N.º 481 · No lleva cerúleo: es ftalo con blanco"],
+["Schmincke Horadam","Delft blue",["PB60"],1,"N.º 482 · solidez ★★★★"],
+["Schmincke Horadam","Cobalt azure",["PB35"],1,"N.º 483 · solidez ★★★★ · granula · El documento aportado lo da como PB28; la carta consultada dice PB35"],
+["Schmincke Horadam","Phthalo blue",["PB15:1"],1,"N.º 484"],
+["Schmincke Horadam","Indigo",["PB66","PB15:1"],1,"N.º 485 · solidez ★★"],
+["Schmincke Horadam","Cobalt blue hue",["PW4","PB29"],1,"N.º 486 · solidez ★★★★ · No lleva cobalto"],
+["Schmincke Horadam","Cobalt blue light",["PB28"],1,"N.º 487 · solidez ★★★★★"],
+["Schmincke Horadam","Cobalt blue deep",["PB74"],1,"N.º 488 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Cobalt turquoise",["PB36"],1,"N.º 489"],
+["Schmincke Horadam","Ultramarine violet",["PB29","PV15"],1,"N.º 490 · solidez ★★★★ · granula"],
+["Schmincke Horadam","Cobalt turquoise light",["PG50"],1,"N.º 491"],
+["Schmincke Horadam","Prussian blue",["PB27"],1,"N.º 492 · solidez ★★★★"],
+["Schmincke Horadam","French ultramarine",["PB29"],1,"N.º 493 · solidez ★★★★ · granula"],
+["Schmincke Horadam","Ultramarine finest",["PB29"],1,"N.º 494 · solidez ★★★★"],
+["Schmincke Horadam","Ultramarine blue",["PB15","PB29"],1,"N.º 495 · solidez ★★★★"],
+["Schmincke Horadam","Ultramarine deep",["PB29"],1,"N.º 496"],
+["Schmincke Horadam","Dark blue",["PB60"],1,"N.º 498 · solidez ★★★"],
+["Schmincke Horadam","Cobalt cerulean blue",["PB36"],1,"N.º 499"],
+["Schmincke Horadam","Cobalt green turquoise",["PB36"],1,"N.º 509 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Chromium oxide green brilliant",["PG18","PG7"],1,"N.º 511"],
+["Schmincke Horadam","Chromium green oxide",["PG17"],1,"N.º 512"],
+["Schmincke Horadam","Viridian",["PG18"],1,"N.º 513 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Helio green",["PG36"],1,"N.º 514 · solidez ★★★★"],
+["Schmincke Horadam","Olive green",["PB15","PG8"],1,"N.º 515 · solidez ★★"],
+["Schmincke Horadam","Green earth",["PG7","PBr7"],1,"N.º 516 · solidez ★★★★"],
+["Schmincke Horadam","Phthalo green",["PG7"],1,"N.º 519 · solidez ★★★★"],
+["Schmincke Horadam","Hooker's green",["PY42","PB15:3","PG7"],1,"N.º 521 · solidez ★★★★"],
+["Schmincke Horadam","May green",["PG7","PY151"],1,"N.º 524 · solidez ★★★★"],
+["Schmincke Horadam","Olive green yellowish",["PG36","PO62"],1,"N.º 525 · solidez ★★★★"],
+["Schmincke Horadam","Permanent green",["PY155","PG7"],1,"N.º 526 · solidez ★★★★"],
+["Schmincke Horadam","Prussian green",["PB60","PG7"],1,"N.º 528 · solidez ★★★★"],
+["Schmincke Horadam","Sap green",["PG7","PY153"],1,"N.º 530 · solidez ★★★"],
+["Schmincke Horadam","Cobalt green dark",["PG26"],1,"N.º 533 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Permanent green olive",["PG7","PO62"],1,"N.º 534 · solidez ★★★★"],
+["Schmincke Horadam","Cobalt green pure",["PG50"],1,"N.º 535 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Transparent green gold",["PBr7","PY154"],1,"N.º 537 · solidez ★★★★"],
+["Schmincke Horadam","Indian red",["PR101"],1,"N.º 645 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Transparent brown",["PBr41"],1,"N.º 648 · solidez ★★★★"],
+["Schmincke Horadam","English Venetian red",["PR101"],1,"N.º 649 · solidez ★★★★★"],
+["Schmincke Horadam","Spinel brown",["PY119"],1,"N.º 650 · solidez ★★★★★"],
+["Schmincke Horadam","Maroon brown",["PBr7"],1,"N.º 651 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Transparent Sienna",["PR101"],1,"N.º 653 · solidez ★★★★★"],
+["Schmincke Horadam","Gold brown",["PBr41","PY65"],1,"N.º 654 · solidez ★★★"],
+["Schmincke Horadam","Yellow ochre",["PY42"],1,"N.º 655 · solidez ★★★★★"],
+["Schmincke Horadam","Yellow raw ochre",["PY43"],1,"N.º 656 · solidez ★★★★★"],
+["Schmincke Horadam","Transparent ochre",["PY42"],1,"N.º 657 · solidez ★★★★★"],
+["Schmincke Horadam","Mars brown",["PBr6"],1,"N.º 658 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Titanium gold ochre",["PBr24"],1,"N.º 659 · solidez ★★★★"],
+["Schmincke Horadam","Raw Sienna",["PBr7"],1,"N.º 660 · solidez ★★★★★"],
+["Schmincke Horadam","Burnt Sienna",["PR101","PBk9"],1,"N.º 661 · solidez ★★★★★"],
+["Schmincke Horadam","Sepia brown reddish",["PR242","PBr7","PBk9"],1,"N.º 662 · solidez ★★★★"],
+["Schmincke Horadam","Sepia brown",["PBr7","PBk9","PB15:1"],1,"N.º 663 · solidez ★★★★"],
+["Schmincke Horadam","Green umber",["PBr7"],1,"N.º 665 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Raw umber",["PY43"],1,"N.º 667 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Burnt umber",["PBr7"],1,"N.º 668 · solidez ★★★★★"],
+["Schmincke Horadam","Vandyke brown",["PY150","PBk7","PBr7"],1,"N.º 669 · solidez ★★★★"],
+["Schmincke Horadam","Madder brown",["PR206"],1,"N.º 670 · solidez ★★★★"],
+["Schmincke Horadam","Transparent umber",["PR101"],1,"N.º 671 · solidez ★★★★★"],
+["Schmincke Horadam","Mahogany brown",["PBr33"],1,"N.º 672 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Ivory black",["PBk9"],1,"N.º 780 · solidez ★★★★★"],
+["Schmincke Horadam","Lamp black",["PBk6"],1,"N.º 781 · solidez ★★★★"],
+["Schmincke Horadam","Neutral tint",["PR122","PB60","PBk7"],1,"N.º 782 · solidez ★★★"],
+["Schmincke Horadam","Schmincke Payne's grey",["PR101","PB29","PBk7"],1,"N.º 783 · solidez ★★★★"],
+["Schmincke Horadam","Perylene green",["PBk31"],1,"N.º 784 · solidez ★★★★"],
+["Schmincke Horadam","Neutral grey",["PR255","PB60","PO62"],1,"N.º 785 · solidez ★★★★"],
+["Schmincke Horadam","Anthracite",["PBk7"],1,"N.º 786 · solidez ★★★★"],
+["Schmincke Horadam","Payne's grey bluish",["PB15:6","PBk6"],1,"N.º 787 · solidez ★★★★"],
+["Schmincke Horadam","Graphite grey",["PBk10"],1,"N.º 788 · solidez ★★★★"],
+["Schmincke Horadam","Hematite black",[],0,"N.º 789 · solidez ★★★★★ · granula · sin composición fiable · El documento lo da como PG17, que es un verde: dato descartado"],
+["Schmincke Horadam","Mars black",["PBk11"],1,"N.º 791 · solidez ★★★★★ · granula"],
+["Schmincke Horadam","Gold",[],0,"N.º 893 · sin composición fiable"],
+["Schmincke Horadam","Silver",[],0,"N.º 894 · sin composición fiable"],
+["Schmincke Horadam","Deep Sea Violet",["PB29","PBr33"],1,"N.º 951 · supergranulante"],
+["Schmincke Horadam","Deep Sea Indigo",["PG18","PV62"],1,"N.º 952 · supergranulante"],
+["Schmincke Horadam","Deep Sea Blue",["PB29","PG50","PV62"],1,"N.º 953 · supergranulante"],
+["Schmincke Horadam","Deep Sea Green",["PG18","PB29"],1,"N.º 954 · supergranulante"],
+["Schmincke Horadam","Deep Sea Black",["PBk11","PB35"],1,"N.º 955 · supergranulante"],
+["Schmincke Horadam","Glacier Brown",["PBr6","PB35"],1,"N.º 961 · supergranulante"],
+["Schmincke Horadam","Glacier Black",["PBk11","PB35"],1,"N.º 962 · supergranulante"],
+["Schmincke Horadam","Glacier Green",["PG18","PB29"],1,"N.º 963 · supergranulante"],
+["Schmincke Horadam","Glacier Turquoise",["PG50","PB29"],1,"N.º 964 · supergranulante"],
+["Schmincke Horadam","Glacier Blue",["PB29","PG50"],1,"N.º 965 · supergranulante"],
+["Schmincke Horadam","Galaxy Violet",["PV62","PB29"],1,"N.º 971 · supergranulante"],
+["Schmincke Horadam","Galaxy Pink",["PR233","PB29"],1,"N.º 972 · supergranulante"],
+["Schmincke Horadam","Galaxy Red",["PR233","PBr6"],1,"N.º 973 · supergranulante"],
+["Schmincke Horadam","Galaxy Brown",["PBr6","PB29"],1,"N.º 974 · supergranulante"],
+["Schmincke Horadam","Galaxy Black",["PBk11","PB29"],1,"N.º 975 · supergranulante"],
+["Schmincke Horadam","Tundra Orange",["PBr6","PY43"],1,"N.º 981 · supergranulante"],
+["Schmincke Horadam","Tundra Pink",["PR233","PBr6"],1,"N.º 982 · supergranulante"],
+["Schmincke Horadam","Tundra Violet",["PV62","PBr6"],1,"N.º 983 · supergranulante"],
+["Schmincke Horadam","Tundra Blue",["PB29","PBr6"],1,"N.º 984 · supergranulante"],
+["Schmincke Horadam","Tundra Green",["PG18","PBr6"],1,"N.º 985 · supergranulante"],
+["Schmincke Horadam","Volcano Yellow",["PY159","PBr6"],1,"N.º 911 · supergranulante"],
+["Schmincke Horadam","Volcano Orange",["PR108","PY159"],1,"N.º 912 · supergranulante"],
+["Schmincke Horadam","Volcano Red",["PR108","PBr6"],1,"N.º 913 · supergranulante"],
+["Schmincke Horadam","Volcano Violet",["PV62","PBr6"],1,"N.º 914 · supergranulante"],
+["Schmincke Horadam","Volcano Brown",["PBr6","PBk11"],1,"N.º 915 · supergranulante"],
+["Schmincke Horadam","Shire Yellow",["PV62","PY159"],1,"N.º 931 · supergranulante"],
+["Schmincke Horadam","Shire Olive",["PB35","PY159"],1,"N.º 932 · supergranulante"],
+["Schmincke Horadam","Shire Green",["PG18","PY159"],1,"N.º 933 · supergranulante"],
+["Schmincke Horadam","Shire Blue",["PB29","PG26","PY159"],1,"N.º 934 · supergranulante"],
+["Schmincke Horadam","Shire Grey",["PB74","PBk11","PY159"],1,"N.º 935 · supergranulante"],
+["Schmincke Horadam","Forest Olive",["PG18","PBr7","PY43"],1,"N.º 941 · supergranulante"],
+["Schmincke Horadam","Forest Green",["PBr33","PG50"],1,"N.º 942 · supergranulante"],
+["Schmincke Horadam","Forest Blue",["PB36","PBk11"],1,"N.º 943 · supergranulante"],
+["Schmincke Horadam","Forest Brown",["PG26","PBr7","PY43"],1,"N.º 944 · supergranulante"],
+["Schmincke Horadam","Forest Grey",["PBk11","PG50","PBr7"],1,"N.º 945 · supergranulante"],
+["Schmincke Horadam","Desert Yellow",["PY159","PBr6"],1,"N.º 921 · supergranulante"],
+["Schmincke Horadam","Desert Orange",["PY159","PR108"],1,"N.º 922 · supergranulante"],
+["Schmincke Horadam","Desert Brown",["PBr6","PB29"],1,"N.º 923 · supergranulante"],
+["Schmincke Horadam","Desert Green",["PG18","PBr6"],1,"N.º 924 · supergranulante"],
+["Schmincke Horadam","Desert Grey",["PBk11","PBr6"],1,"N.º 925 · supergranulante"],
+["Schmincke Horadam","Haze Pink",["PR233","PB29"],1,"N.º 901 · supergranulante"],
+["Schmincke Horadam","Haze Violet",["PV62","PB29"],1,"N.º 902 · supergranulante"],
+["Schmincke Horadam","Haze Blue",["PB29","PBr6"],1,"N.º 903 · supergranulante"],
+["Schmincke Horadam","Haze Indigo",["PB29","PBk11"],1,"N.º 904 · supergranulante"],
+["Schmincke Horadam","Haze Brown",["PBr6","PB29"],1,"N.º 905 · supergranulante"],
+["Schmincke Horadam","Urban Red",["PR108","PB35","PBr6","PY159"],1,"N.º 926 · supergranulante"],
+["Schmincke Horadam","Urban Green",["PB36","PBk11","PY159"],1,"N.º 936 · supergranulante"],
+["Schmincke Horadam","Urban Brown",["PR108","PBk11","PY159"],1,"N.º 946 · supergranulante"],
+["Schmincke Horadam","Urban Blue",["PB29","PBk11","PG50"],1,"N.º 956 · supergranulante"],
+["Schmincke Horadam","Urban Grey",["PBk11","PBr6","PB29"],1,"N.º 966 · supergranulante"],["Winsor & Newton Cotman","Lemon Yellow Hue",["PY175"],1,"Ref. 1 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Yellow Pale Hue",["PY175","PY65"],1,"Ref. 2 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Gamboge Hue",["PR209","PY150"],1,"Ref. 3 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Yellow Hue",["PY65","PY97"],1,"Ref. 4 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Orange Hue",["PO43","PY83"],1,"Ref. 5 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Red Pale Hue",["PR255","PY65"],1,"Ref. 6 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Red Hue",["PR149","PR255"],1,"Ref. 7 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cadmium Red Deep Hue",["PR188","PR254"],1,"Ref. 8 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Alizarin Crimson Hue",["PR179"],1,"Ref. 9 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Rose Madder Hue",["PR179"],1,"Ref. 10 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Permanent Rose",["PV19"],1,"Ref. 11 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Purple Lake",["PV19"],1,"Ref. 12 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Mauve",["PR122","PV23"],1,"Ref. 13 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Dioxazine Purple",["PV23"],1,"Ref. 14 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Turquoise",["PB15","PG7"],1,"Ref. 15 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Ultramarine",["PB29"],1,"Ref. 16 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cerulean Blue Hue",["PB15"],1,"Ref. 17 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Cobalt Blue Hue",["PB29","PW5"],1,"Ref. 18 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Iridescent White",["PW20"],1,"Ref. 19 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Intense Blue (Phthalo Blue)",["PB15"],1,"Ref. 20 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Intense Green (Phthalo Green)",["PG36"],1,"Ref. 21 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Prussian Blue",["PB27"],1,"Ref. 22 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Viridian Hue",["PG7"],1,"Ref. 23 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Emerald",["PG7","PY175"],1,"Ref. 24 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Hooker's Green Dark",["PB15","PG7","PY139"],1,"Ref. 25 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Hooker's Green Light",["PB15","PG7","PY139"],1,"Ref. 26 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Sap Green",["PG36","PR101","PY139"],1,"Ref. 27 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Raw Sienna",["PR101","PY42"],1,"Ref. 28 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Yellow Ochre",["PY42"],1,"Ref. 29 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Raw Umber",["PBr7","PY42"],1,"Ref. 30 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Burnt Sienna",["PR101"],1,"Ref. 31 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Indian Red",["PR101"],1,"Ref. 32 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Vandyke Brown",["PBr7","PR101"],1,"Ref. 33 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Light Red",["PR101"],1,"Ref. 34 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Sepia",["PBk7","PBr7"],1,"Ref. 35 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Payne's Gray",["PB15","PB29","PBk7"],1,"Ref. 36 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Burnt Umber",["PBr7","PY42"],1,"Ref. 37 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Lamp Black",["PBk6"],1,"Ref. 38 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Indigo",["PB15","PB29","PBk7"],1,"Ref. 39 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Chinese White",["PW5"],1,"Ref. 40 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Ivory Black",["PBk9"],1,"Ref. 41 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Iridescent Blue",["PW20","PB27"],1,"Ref. 42 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Yellow Gold",["PW20"],1,"Ref. 43 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Bronze",["PW20"],1,"Ref. 44 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Red Copper",["PW20"],1,"Ref. 45 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Silver",["PW20","PBk9"],1,"Ref. 46 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Iridescent Black",["PW20"],1,"Ref. 47 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton Cotman","Pewter",["PW20"],1,"Ref. 48 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Aureolin",["PY154","PY175","PY150"],1,"Ref. W039 / W239 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Bamboo Green",["PG36"],1,"Ref. W078 / W278 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Blue Grey",["PB15","PW6"],1,"Ref. W150 / W350 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Bright Rose (Luminous)",[],0,"Ref. W170 / W370 · Lleva colorantes fluorescentes (BV11, AB83), no pigmentos con código estable · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Bright Violet (Luminous)",[],0,"Ref. W175 / W375 · Lleva colorantes fluorescentes (BV7, BV15), no pigmentos con código estable · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Brilliant Orange",["PO73","PO62"],1,"Ref. W047 / W247 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Crimson Lake",["PR177","PR122","PV19"],1,"Ref. W010 / W210 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Permanent Alizarin Crimson",["PV19","PBr25"],1,"Ref. W009 / W209 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Carmine",["PR83"],1,"Ref. W011 / W211 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Quinacridone Red",["PV19"],1,"Ref. W005 / W205 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Pyrrole Rubin",["PR264"],1,"Ref. W006 / W206 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Perylene Maroon",["PR179"],1,"Ref. W008 / W208 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Pyrrole Red",["PR254"],1,"Ref. W007 / W207 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Quinacridone Scarlet",["PR209"],1,"Ref. W027 / W227 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Scarlet Lake",["PO73","PR254","PV19"],1,"Ref. W022 / W222 · composición según el documento aportado, no verificada con el fabricante"],
+["Holbein","Opera (Quinacridone Opera)",[],0,"Ref. W013 / W213 · Lleva colorantes fluorescentes (BV10), no pigmentos con código estable · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Crimson Lake",["PR83"],1,"Ref. 503 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Alizarin Crimson Hue",["PR23"],1,"Ref. 504 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Quinacridone Red",["PV19"],1,"Ref. 505 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Permanent Rose",["PV19"],1,"Ref. 506 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Carmine",["PR83"],1,"Ref. 507 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Rose Madder",["PR83"],1,"Ref. 508 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Pyrrole Red",["PR254"],1,"Ref. 510 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Permanent Red",["PR209"],1,"Ref. 512 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Brown Madder",["PR83","PY83"],1,"Ref. 514 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Scarlet Lake",["PR48:1","PR9"],1,"Ref. 516 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Opera",[],0,"Ref. 518 · Lleva colorantes fluorescentes (BR1), no pigmentos con código estable · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Cadmium Red Deep",["PR108"],1,"Ref. 524 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Vermillion",["PR108","PO20"],1,"Ref. 527 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Vermillion Hue",["PO16"],1,"Ref. 528 · composición según el documento aportado, no verificada con el fabricante"],
+["ShinHan PWC","Cadmium Red Orange",["PO20"],1,"Ref. 531 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Chinese White",["PW4"],1,"Ref. 1006 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Opaque White",["PW5","PW6"],1,"Ref. 1007 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Lemon Yellow (Primary)",["PY3"],1,"Ref. 1021 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Aureolin",["PY175"],1,"Ref. 1015 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Cadmium Yellow Lemon",["PY35"],1,"Ref. 1044 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Permanent Yellow Light",["PY155"],1,"Ref. 1045 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Cadmium Yellow Light",["PY35"],1,"Ref. 1026 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Gamboge",["PY155","PR242"],1,"Ref. 1016 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Indian Yellow",["PY65"],1,"Ref. 1024 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Naples Yellow",["PBr24"],1,"Ref. 1034 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Yellow Ochre",["PY42"],1,"Ref. 1031 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Permanent Yellow Deep",["PO62"],1,"Ref. 1048 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Cadmium Orange",["PO20"],1,"Ref. 1028 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Permanent Orange",["PO71"],1,"Ref. 1047 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Cadmium Red Light",[],0,"Ref. 1072 · El documento lo da como PO20, que es un naranja. Dato descartado. · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Vermilion Red",["PR255"],1,"Ref. 1088 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Permanent Red",["PR242"],1,"Ref. 1097 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Cadmium Red Deep",["PR108"],1,"Ref. 1074 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Lukas Red",["PR254"],1,"Ref. 1080 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Madder Lake Deep",["PR264"],1,"Ref. 1066 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Magenta (Primary)",["PR122"],1,"Ref. 1051 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Dioxazine Violet",["PV23"],1,"Ref. 1142 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Verona Green Earth",[],0,"Ref. 1158 · El documento lo da como PG26, verde de cobalto, no tierra verde. Dato descartado. · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Oxide of Chromium",["PG17"],1,"Ref. 1153 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Olive Green",["PG36","PO36"],1,"Ref. 1176 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Raw Sienna",["PBr7","PY42"],1,"Ref. 1039 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Gold Ochre",["PY42","PR101","PBk7"],1,"Ref. 1023 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Burnt Sienna",["PBr7"],1,"Ref. 1109 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","English Red Light",["PR101"],1,"Ref. 1054 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","English Red Deep",["PR101"],1,"Ref. 1055 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Caput Mortuum Deep",["PR101","PBk11"],1,"Ref. 1052 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Burnt Umber",["PY155","PR176","PBk7"],1,"Ref. 1111 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Van Dyck Brown",["PY42","PY155","PR176","PBk7"],1,"Ref. 1112 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Sepia",["PY42","PBk7"],1,"Ref. 1106 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Ivory Black",["PBk7"],1,"Ref. 1182 · composición según el documento aportado, no verificada con el fabricante"],
+["LUKAS 1862","Payne's Grey",["PR176","PB15:1","PBk7"],1,"Ref. 1184 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Lemon Yellow",["PY53"],1,"Ref. 347 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Bismuth Yellow",["PY184"],1,"Ref. 025 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Cadmium Lemon",["PY35"],1,"Ref. 086 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Cadmium-Free Lemon",[],0,"Lleva colorantes fluorescentes (N/A(manufacturerdoesnotpublishCIcode)), no pigmentos con código estable · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Lemon Yellow Deep",["PY159"],1,"composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Aureolin Hue",["PBr7","PY151"],1,"Ref. 016 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Transparent Yellow",["PY150"],1,"Ref. 653 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Cadmium Yellow Pale",["PY35"],1,"Ref. 118 · composición según el documento aportado, no verificada con el fabricante"],
+["Winsor & Newton","Turner's Yellow",["PY216"],1,"Ref. 649 · composición según el documento aportado, no verificada con el fabricante"],["Roman Szmal","Chinese White",["PW4"],1,"N.º 101 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Titanium White",["PW6"],1,"N.º 102 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Buff Titanium",["PW6"],1,"N.º 201 · La carta lo da como PW6:1 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Nickel Titanate Yellow",["PY53"],1,"N.º 202 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Hansa Yellow Light",["PY3"],1,"N.º 203 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Lemon Yellow",["PY61"],1,"N.º 204 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Benzymidazole Yellow",["PY154"],1,"N.º 205 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Hansa Yellow Medium",["PY74"],1,"N.º 206 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Hansa Yellow Deep",["PY65"],1,"N.º 207 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Azo Yellow",["PY128"],1,"N.º 264 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Gamboge (Hue)",["PY95"],1,"N.º 266 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cadmium Lemon",["PY35"],1,"N.º 301 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Bismuth Yellow",["PY184"],1,"N.º 302 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Isoindolinone Yellow Light",["PY109"],1,"N.º 303 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Aquarius Yellow",["PY168"],1,"N.º 304 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Aureoline (Hue)",["PY151"],1,"N.º 305 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cadmium Yellow Pale",["PY35"],1,"N.º 306 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Indian Yellow (Hue)",["PY108"],1,"N.º 307 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Nickel Azo Yellow",["PY150"],1,"N.º 308 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cadmium Yellow Deep",["PY37"],1,"N.º 309 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Quinophthalone Yellow",["PY138"],1,"N.º 362 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Anthraquinone Yellow",["PY147"],1,"N.º 371 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Transparent Gold Ochre",["PY43"],1,"N.º 110 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Blue Ridge Raw Sienna",["PY43"],1,"N.º 255 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Natural Umber Reddish",["PBr7"],1,"N.º 137 · Tierra natural, no oxido sintetico · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Bismuth Orange",["PO86"],1,"N.º 372 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Perylene Scarlet",["PR149"],1,"N.º 373 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Quinacridone Warm Scarlet",["PR207"],1,"N.º 374 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Perylene Red",["PR178"],1,"N.º 365 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Perylene Red Deep",["PR179"],1,"N.º 375 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Quinacridone Warm Pink",["PV42"],1,"N.º 382 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Carmine Hue",["PR221"],1,"N.º 383 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Benzimidazole Brown",["PBr25"],1,"N.º 378 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Nickel Azo Gold",["PY150","PR102"],1,"N.º 380 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Mineral Pink",["PB29","PR122"],1,"N.º 379 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cobalt Violet Deep",["PV14"],1,"N.º 404 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Aquarius Violet",["PB29","PV19","PR255"],1,"N.º 369 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","French Ultramarine",["PB29"],1,"N.º 221 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Ultramarine Blue (Green Shade)",["PB29"],1,"N.º 222 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Ultramarine Intense",["PB29"],1,"N.º 254 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cobalt Blue Light",["PB28"],1,"N.º 411 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cobalt Coelin Blue",["PB35"],1,"N.º 406 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Cobalt Turquoise",["PB36"],1,"N.º 340 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Phthalo Blue (Green Shade)",["PB15:3"],1,"N.º 103 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Phthalo Blue (Red Shade)",["PB15:6"],1,"N.º 225 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Royal Blue",["PW4","PB29","PB15:1"],1,"N.º 224 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Royal Blue Light",["PB29","PW6","PB15:1"],1,"N.º 269 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Blue Sky",["PW4","PB15:1"],1,"N.º 226 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Phthalo Green (Blue Shade)",["PG7"],1,"N.º 104 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Chromium Green Oxide Dark",["PG17"],1,"N.º 270 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Green Gold",["PY150","PY129","PG36"],1,"N.º 347 · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Forest Green",["PB29","PBr11","PY150"],1,"N.º 271 · Muy granulante · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Lava",["PG17","PB29","PR255"],1,"N.º 384 · Muy granulante · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Urban Grey",["PB29","PY150","PW6","PBr29"],1,"N.º 262 · Granula · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Velvet Black",["PG7","PR264"],1,"N.º 263 · Negro de mezcla, sin pigmento negro · composicion segun base de datos de pigmentos consultada"],
+["Roman Szmal","Lazurite (Lapis Lazuli)",[],0,"N.º 601 · Lapislazuli molido: mineral sin codigo de pigmento"],
+["Roman Szmal","Vivianite (Blue Ochre)",[],0,"N.º 701 · Mineral sin codigo de pigmento"],
+["Roman Szmal","Quinacridone Scarlet",[],0,"N.º 357 · Mezcla propia sin codigo asignado por la marca"],
+["Roman Szmal","Quinacridone Rose",[],0,"N.º 381 · Sin codigo asignado en la fuente consultada"],
+["Roman Szmal","Quinacridone Magenta Intense",[],0,"N.º 416 · Sin codigo asignado en la fuente consultada"],
+["Sennelier","French Ultramarine Blue",["PB29"],1,""],
+["Sennelier","Ultramarine Deep",["PB29"],1,""],
+["Sennelier","Phthalocyanine Blue",["PB15:3"],1,""],
+["Sennelier","Prussian Blue",["PB27"],1,""],
+["Sennelier","Blue Indanthrene",["PB60"],1,""],
+["Sennelier","Cerulean Blue",["PB28"],1,"Las versiones a partir de 2024 pasan a PB35."],
+["Sennelier","Cerulean Blue Red Shade",["PB28"],1,"Las versiones a partir de 2024 pasan a PB35."],
+["Sennelier","Turquoise Green",["PG50"],1,""],
+["Sennelier","Cobalt Green",["PB36"],1,""],
+["Sennelier","Primaire Quinacridone Red",["PR209"],1,""],
+["Sennelier","Dioxazine Purple",["PV23"],1,""],
+["Sennelier","Yellow Ochre",["PY43"],1,""],
+["Sennelier","Burnt Sienna",["PBr7"],1,""],
+["Sennelier","Raw Umber",["PBr7"],1,""],
+["Sennelier","Cadmium Yellow Light",["PY35"],1,""],
+["Sennelier","Cadmium Red Light",["PR108"],1,""],
+["Sennelier","Viridian",[],0,"En Sennelier no es PG18 puro sino una mezcla. Composición sin confirmar."],
+["Sennelier","Phthalo. Green Light",[],0,"Composición sin confirmar."],
+["Rembrandt","Ultramarine Deep",["PB29"],1,""],
+["Rembrandt","French Ultramarine",["PB29"],1,""],
+["Rembrandt","Cobalt Blue",["PB28"],1,""],
+["Rembrandt","Cerulean Blue",["PB35"],1,""],
+["Rembrandt","Cerulean Blue Greenish",["PB36"],1,""],
+["Rembrandt","Phthalo Blue Greenish",["PB15:3"],1,"La carta indica PB15 sin subíndice; el tono corresponde al verdoso."],
+["Rembrandt","Prussian Blue",["PB27"],1,""],
+["Rembrandt","Indanthrene Blue",["PB60"],1,""],
+["Rembrandt","Phthalo Green",["PG7"],1,""],
+["Rembrandt","Viridian",["PG18"],1,""],
+["Rembrandt","Chromium Oxide Green",["PG17"],1,""],
+["Rembrandt","Green Earth",["PG23"],1,""],
+["Rembrandt","Ultramarine Violet",["PV15"],1,""],
+["Rembrandt","Manganese Violet",["PV16"],1,""],
+["Rembrandt","Blue Violet",["PV23"],1,""],
+["Rembrandt","Cobalt Violet",["PV49"],1,"La carta lo da como PV14, de la misma familia de violetas de cobalto."],
+["Rembrandt","Yellow Ochre",["PY43","PY42"],1,""],
+["Rembrandt","Gold Ochre",["PY43"],1,""],
+["Rembrandt","Raw Sienna",["PY43"],1,""],
+["Rembrandt","Burnt Sienna",["PBr7"],1,""],
+["Rembrandt","Burnt Umber",["PBr7"],1,""],
+["Rembrandt","Transparent Oxide Red",["PR101"],1,""],
+["Rembrandt","Azomethine Green Yellow",["PY129"],1,""],
+["Rembrandt","Ivory Black",["PBk9"],1,""],
+["Rembrandt","Oxide Black",["PBk11"],1,""],
+["Van Gogh","Ultramarine Deep",["PB29"],1,""],
+["Van Gogh","Cobalt Blue (Ultramarine)",["PB29","PW6"],1,"No lleva cobalto: es ultramar con blanco."],
+["Van Gogh","Cerulean Blue (Phthalo)",["PB15:3","PW6"],1,"No lleva cerúleo: es ftalo con blanco, así que no se levanta como un cerúleo real."],
+["Van Gogh","Prussian Blue",["PB27"],1,""],
+["Van Gogh","Phthalo Green",["PG7"],1,""],
+["Van Gogh","Viridian",["PG7"],1,"Pese al nombre no es PG18, sino ftalo."],
+["Van Gogh","Yellow Ochre",["PY42"],1,""],
+["Van Gogh","Azo Yellow Medium",["PY154","PW6","PO62"],1,""],
+["Van Gogh","Azomethine Green Yellow",["PY129"],1,""],
+["Van Gogh","Pyrrole Orange",["PO73"],1,""],
+["Van Gogh","Permanent Red Light",["PR255"],1,""],
+["Van Gogh","Permanent Red Deep",["PR149"],1,""],
+["Van Gogh","Quinacridone Rose (Primary)",["PV19"],1,""],
+["Van Gogh","Permanent Blue Violet",["PV23"],1,""],
+["Van Gogh","Chinese White",["PW4"],1,""],
+["Van Gogh","Burnt Sienna",[],0,"Composición sin confirmar."],
+["Van Gogh","Burnt Umber",[],0,"Composición sin confirmar."],
+["White Nights","Lemon",["PY3"],1,"Ref. 214 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cadmium Lemon",["PY35"],1,"Ref. 203 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Aureolin",["PY151"],1,"Ref. 253 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Yellow",["PY154"],1,"Ref. 211 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cadmium Yellow Medium",["PY35"],1,"Ref. 201 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Naples Yellow Light",["PY216"],1,"Ref. 219 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Naples Yellow",["PY42","PY35","PO20","PW4"],1,"Ref. 209 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Golden",["PY3","PO64"],1,"Ref. 216 · Hay una version antigua con PO13, mucho menos solida · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cadmium Orange",["PO20"],1,"Ref. 304 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Naples Orange",["PY216"],1,"Ref. 254 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Golden Deep",["PO62"],1,"Ref. 217 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Orange",["PO64"],1,"Ref. 315 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Nickel Titanate Yellow",["PY53"],1,"Ref. 271 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Irgazin Yellow",["PY129"],1,"Ref. 257 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Pyrrol Orange",["PO73"],1,"Ref. 399 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Titian Red",["PO36"],1,"Ref. 226 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Ochre Light",["PY43"],1,"Ref. 206 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Red Ochre",["PR102"],1,"Ref. 309 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","English Red",["PR101"],1,"Ref. 321 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Venetian Red",["PR102","PR187"],1,"Ref. 357 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cadmium Red Light",["PR108"],1,"Ref. 302 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Geranium Red",["PR242"],1,"Ref. 364 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Scarlet",["PR188"],1,"Ref. 318 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Quinacridone Scarlet",["PR209"],1,"Ref. 385 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Ruby",["PR170"],1,"Ref. 323 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Carmine",["PV19"],1,"Ref. 319 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Quinacridone Red",["PV19"],1,"Ref. 361 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Madder Lake Red Light",["PR187"],1,"Ref. 313 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Claret",["PR12"],1,"Ref. 325 · Pigmento poco solido · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Quinacridone Violet",["PV55"],1,"Ref. 621 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cobalt Blue",["PB28"],1,"Ref. 508 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cobalt Azure Blue",["PB36"],1,"Ref. 532 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Bright Blue",["PB15:3"],1,"Ref. 509 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Azure",["PB15"],1,"Ref. 513 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Blue",["PB15:6"],1,"Ref. 515 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Ultramarine",["PB29"],1,"Ref. 511 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Ultramarine Deep",["PB29"],1,"Ref. 521 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Prussian Blue",["PB27"],1,"Ref. 518 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Blue Lake",["PB1"],1,"Ref. 510 · Solidez nula: se decolora · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Indigo",["PB15:6","PBk7","PV23"],1,"Ref. 516 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cobalt Turquoise",["PB28"],1,"Ref. 531 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Cobalt Chrome Turquoise",["PB36"],1,"Ref. 533 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Turquoise Blue",["PB15:3","PG7"],1,"Ref. 507 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Emerald Green",["PG7"],1,"Ref. 713 · Pese al nombre es ftalo, no verde esmeralda · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Green Light",["PG36"],1,"Ref. 717 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Green Original",["PY35","PG7"],1,"Ref. 719 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","May Green",["PY3","PG36"],1,"Ref. 745 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Yellowish Green",["PY3","PG7"],1,"Ref. 718 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Sap Green",["PY150","PG36","PBk7"],1,"Ref. 716 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Olive Green",["PY3","PO62","PB15:3"],1,"Ref. 727 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Chromium Oxide",["PG17"],1,"Ref. 704 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Green",["PG8"],1,"Ref. 725 · Pigmento poco solido · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Green Earth",["PBr7","PG17"],1,"Ref. 730 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Raw Sienna",["PY43"],1,"Ref. 405 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Burnt Sienna",["PBr7"],1,"Ref. 406 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Umber",["PY43","PBr7","PBk7"],1,"Ref. 418 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Burnt Umber",["PBr7"],1,"Ref. 408 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Vandyke Brown",["PR102","PBk8"],1,"Ref. 401 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Mars Brown",["PBr6"],1,"Ref. 412 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Sepia",["PR102","PR187","PBk7"],1,"Ref. 413 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Voronezh Black",["PBk8"],1,"Ref. 806 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Payne's Gray",["PBk7","PB15","PV55"],1,"Ref. 812 · Existe otra version con PV23 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Neutral Black",["PR187","PB15:1","PBk7"],1,"Ref. 805 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Ivory Black Hue",["PR102","PBk7"],1,"Ref. 811 · Granula · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Mars Black",["PBk11"],1,"Ref. 800 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Lamp Black",["PBk7"],1,"Ref. 801 · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Blue Dream",["PV14","PB28"],1,"Ref. 570 · Granulante · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Blue Mystery",["PV16","PB29","PG7"],1,"Ref. 571 · Granulante · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Mint Dream",["PV14","PB36","PG7"],1,"Ref. 776 · Granulante · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Green Dream",["PG50","PY3","PBr24"],1,"Ref. 777 · Granulante · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Rose Dream",["PV14","PO73"],1,"Ref. 3002 · Granulante · composicion segun base de datos de pigmentos consultada; la marca no publica carta tecnica"],
+["White Nights","Yellow Ochre",[],0,"Ref. 218 · en la gama oficial, sin composicion publicada"],
+["White Nights","Petersburg Ochre",[],0,"Ref. 258 · en la gama oficial, sin composicion publicada"],
+["White Nights","Dunes",[],0,"Ref. 255 · en la gama oficial, sin composicion publicada"],
+["White Nights","Mocha",[],0,"Ref. 433 · en la gama oficial, sin composicion publicada"],
+["White Nights","Maroon",[],0,"Ref. 432 · en la gama oficial, sin composicion publicada"],
+["White Nights","Pearl-Grey",[],0,"Ref. 819 · en la gama oficial, sin composicion publicada"],
+["White Nights","Marengo",[],0,"Ref. 818 · en la gama oficial, sin composicion publicada"],
+["White Nights","Warm Green",[],0,"Ref. 747 · en la gama oficial, sin composicion publicada"],
+["White Nights","Mint",[],0,"Ref. 735 · en la gama oficial, sin composicion publicada"],
+["White Nights","Cobalt Titanate Green",[],0,"Ref. 765 · en la gama oficial, sin composicion publicada"],
+["Michael Harding","Titanium White",["PW6"],1,""],
+["Michael Harding","Chinese White",["PW4","PW6"],1,""],
+["Michael Harding","Warm White",["PW6","PW4","PY43"],1,""],
+["Michael Harding","Warm Light Yellow",["PW6","PW4","PY43"],1,""],
+["Michael Harding","Warm Yellow",["PW6","PW4","PY83"],1,""],
+["Michael Harding","Lemon Yellow",["PY175"],1,""],
+["Michael Harding","Bright Yellow Lake",["PY3"],1,""],
+["Michael Harding","Cadmium Yellow Lemon",["PY35"],1,""],
+["Michael Harding","Yellow Benzimidazolone",["PY151"],1,""],
+["Michael Harding","Yellow Lake",["PY180"],1,""],
+["Michael Harding","Hansa Yellow Medium",["PY97"],1,""],
+["Michael Harding","Cadmium Yellow",["PY35"],1,""],
+["Michael Harding","Cadmium Golden Yellow",["PY35"],1,""],
+["Michael Harding","Indian Yellow",["PY83"],1,""],
+["Michael Harding","Indian Yellow Red Shade",["PY83","PR101"],1,""],
+["Michael Harding","Cadmium Yellow Deep",["PY35"],1,""],
+["Michael Harding","Yellow Lake Deep",["PY139"],1,""],
+["Michael Harding","Brilliant Orange",["PO62"],1,""],
+["Michael Harding","Cadmium Orange",["PO20"],1,""],
+["Michael Harding","Permanent Orange",["PO73"],1,""],
+["Michael Harding","Orange Benzimidazolone",["PO36"],1,""],
+["Michael Harding","Orange Sunset",["PO34"],1,""],
+["Michael Harding","Scarlet Lake Light",["PR188"],1,""],
+["Michael Harding","Cadmium Red Light",["PR108"],1,""],
+["Michael Harding","Rich Scarlet",["PR112"],1,""],
+["Michael Harding","Scarlet Lake",["PR170"],1,""],
+["Michael Harding","Cadmium Red",["PR108"],1,""],
+["Michael Harding","Pyrrole Red",["PR254"],1,""],
+["Michael Harding","Rose Dore",["PY97","PV19"],1,""],
+["Michael Harding","Perylene Crimson",["PR149"],1,""],
+["Michael Harding","Cadmium Red Deep",["PR108"],1,""],
+["Michael Harding","Pyrrole Crimson",["PR264"],1,""],
+["Michael Harding","Cinquasia Maroon",["PR206"],1,""],
+["Michael Harding","Perrindo Maroon",["PR179"],1,""],
+["Michael Harding","Rose Madder",["NR9"],1,""],
+["Michael Harding","Alizarin Crimson",["PR83"],1,""],
+["Michael Harding","Alizarin Claret",["PR177"],1,""],
+["Michael Harding","Quinacridone Rose",["PV19"],1,""],
+["Michael Harding","Quinacridone Coral",["PR209"],1,""],
+["Michael Harding","Brilliant Pink",["PW6","PW4","PR112","PR122"],1,""],
+["Michael Harding","Opera Rose",["PR122"],1,""],
+["Michael Harding","Magenta",["PR122"],1,""],
+["Michael Harding","Amethyst",["PR122","PB29"],1,""],
+["Michael Harding","Cobalt Violet Light",["PV14"],1,""],
+["Michael Harding","Cobalt Violet Dark",["PV14"],1,""],
+["Michael Harding","Wisteria",["PW6","PR122","PB29"],1,""],
+["Michael Harding","Manganese Violet",["PV16"],1,""],
+["Michael Harding","Potters Pink",["PR233"],1,""],
+["Michael Harding","Caribbean Turquoise",["PB15:3","PG7"],1,""],
+["Michael Harding","Van Dyke Brown",["PBr8"],1,"Un solo pigmento, al contrario que casi todos los Van Dyke del mercado."],
+["Michael Harding","Ultramarine Violet",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Terre Verte Blue Shade",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Prussian Blue",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Raw Sienna Dark",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Sky Blue Phthalo",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Terre Verte",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Bright Green Lake",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Titanium Buff",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Yellow Ochre Deep",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Yellow Ochre",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Raw Sienna Light",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Raw Umber",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Pozzuoli Red",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Indian Red",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Red Umber",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Burnt Sienna",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Burnt Umber",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Paynes Grey",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Lamp Black",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Ivory Black",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Transparent Oxide Yellow",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Italian Burnt Ochre",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","Transparent Oxide Brown",[],0,"La marca no publica el pigmento en la página que puedo leer."],
+["Michael Harding","French Yellow Ochre",[],0,"La marca no publica el pigmento en la página que puedo leer."]
+];
+</script>
+<script>
+/* ============================================================
+   UTILIDADES DE COLOR
+   ============================================================ */
+const hex2rgb = h => [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const rgb2hex = c => "#" + c.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0")).join("");
+
+function rgb2lab(rgb){
+  let [r,g,b] = rgb.map(v=>{v/=255; return v>0.04045?Math.pow((v+0.055)/1.055,2.4):v/12.92;});
+  let x=(r*0.4124+g*0.3576+b*0.1805)/0.95047,
+      y=(r*0.2126+g*0.7152+b*0.0722),
+      z=(r*0.0193+g*0.1192+b*0.9505)/1.08883;
+  const f=t=>t>0.008856?Math.cbrt(t):(7.787*t)+16/116;
+  x=f(x);y=f(y);z=f(z);
+  return [116*y-16, 500*(x-y), 200*(y-z)];
+}
+const dE = (a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+const chroma = lab => Math.hypot(lab[1],lab[2]);
+
+/* mezcla sustractiva aproximada: media geométrica por canal */
+function mixRGB(a,b,w){
+  w = w===undefined?0.5:w;
+  return [0,1,2].map(i=>{
+    const x=Math.max(1,a[i])/255, y=Math.max(1,b[i])/255;
+    return 255*Math.pow(x,1-w)*Math.pow(y,w);
+  });
+}
+
+/* lavado de acuarela: degradado suave con borde más cargado */
+function washCSS(hex){
+  const [r,g,b] = hex2rgb(hex);
+  const light = `rgba(${r},${g},${b},.55)`;
+  const mid   = `rgba(${r},${g},${b},.88)`;
+  const deep  = `rgba(${Math.round(r*.78)},${Math.round(g*.78)},${Math.round(b*.78)},.95)`;
+  return `radial-gradient(120% 90% at 30% 20%, ${light} 0%, ${mid} 55%, ${deep} 100%)`;
+}
+
+/* ============================================================
+   ÍNDICES
+   ============================================================ */
+const PIG = {}; P.forEach(p => PIG[p[0]] = {
+  code:p[0], name:p[1], fam:p[2], hex:p[3],
+  transp:p[4], gran:p[5], tint:p[6], lf:p[7], note:p[8],
+  lab: rgb2lab(hex2rgb(p[3]))
+});
+const TUBES = T.map((t,i)=>{
+  const pigs = t[2].filter(c=>PIG[c]);
+  let rgb = pigs.length ? pigs.map(c=>hex2rgb(PIG[c].hex)).reduce((a,b)=>mixRGB(a,b)) : [128,128,128];
+  return {
+    id:i, brand:t[0], name:t[1], pigs, verified:t[3], note:t[4]||"",
+    fam: pigs.length?PIG[pigs[0]].fam:"—",
+    hex: rgb2hex(rgb), lab: rgb2lab(rgb),
+    mono: pigs.length===1,
+    risky: pigs.some(c=>PIG[c].lf==="III"),
+    gran: pigs.length?Math.max(...pigs.map(c=>PIG[c].gran)):0,
+    tint: pigs.length?Math.max(...pigs.map(c=>PIG[c].tint)):0
+  };
+});
+const BRANDS = [...new Set(TUBES.map(t=>t.brand))].sort();
+
+/* pigmento -> tubos que lo llevan */
+const BY_PIG = {};
+TUBES.forEach(t=>t.pigs.forEach(c=>{(BY_PIG[c]=BY_PIG[c]||[]).push(t)}));
+
+/* ============================================================
+   ESTADO Y PERSISTENCIA
+   ============================================================ */
+let box = new Set();
+const KEY = "pigmenta.caja.v1";
+function loadBox(){
+  try{ const raw = window.localStorage.getItem(KEY); if(raw) box = new Set(JSON.parse(raw)); }
+  catch(e){ /* sin almacenamiento: la caja vive solo en esta sesión */ }
+}
+function saveBox(){
+  try{ window.localStorage.setItem(KEY, JSON.stringify([...box])); }catch(e){}
+}
+loadBox();
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ============================================================
+   FRANJA DE LAVADOS
+   ============================================================ */
+$("#washes").innerHTML = P.map(p =>
+  `<button class="wash" data-pig="${p[0]}" title="${esc(p[1])} · ${p[0]}" aria-label="${esc(p[1])}">
+     <i style="background:${washCSS(p[3])}"></i></button>`).join("");
+$("#washes").addEventListener("click", e=>{
+  const b = e.target.closest(".wash"); if(b) openPig(b.dataset.pig);
+});
+
+/* ============================================================
+   PESTAÑAS
+   ============================================================ */
+$$("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+  $$("nav.tabs button").forEach(x=>x.setAttribute("aria-selected", x===b));
+  ["pigmentos","tubos","caja","mezclas","foto","paletas"].forEach(t=>{
+    $("#tab-"+t).hidden = (t !== b.dataset.tab);
+  });
+  if(b.dataset.tab==="caja"){ renderBox(); }
+  if(b.dataset.tab==="mezclas"){ renderMixes(); }
+  if(b.dataset.tab==="paletas"){ renderPaletas(); }
+}));
+
+/* ============================================================
+   PESTAÑA 1 · PIGMENTOS
+   ============================================================ */
+FAMILIAS.forEach(f=>{
+  $("#f-fam").insertAdjacentHTML("beforeend",`<option>${f}</option>`);
+  $("#f-fam2").insertAdjacentHTML("beforeend",`<option>${f}</option>`);
+});
+BRANDS.forEach(b=>{
+  $("#f-marca").insertAdjacentHTML("beforeend",`<option>${esc(b)}</option>`);
+  $("#f-marca2").insertAdjacentHTML("beforeend",`<option>${esc(b)}</option>`);
+});
+
+function renderPigs(){
+  const q = norm($("#q-pig").value.trim());
+  const fam = $("#f-fam").value;
+  const hideFug = $("#f-fug").checked;
+  const list = P.map(p=>PIG[p[0]]).map(p=>({p, sc:scorePig(p,q)}))
+    .filter(({p,sc})=>{
+      if(sc < 0) return false;
+      if(fam && p.fam!==fam) return false;
+      if(hideFug && p.lf==="III") return false;
+      return true;
+    }).sort((a,b)=>a.sc-b.sc).map(x=>x.p);
+  $("#hits-pig").textContent = q
+    ? `${list.length} ${list.length===1?"pigmento":"pigmentos"}` : "";
+  $("#grid-pig").innerHTML = list.length ? list.map(p=>`
+    <button class="card" data-pig="${p.code}">
+      <div class="swatch" style="background:${washCSS(p.hex)}"></div>
+      <div class="body">
+        <div class="code">${p.code}${p.lf==="III"?' · poco sólido':''}</div>
+        <div class="name">${esc(p.name)}</div>
+        <div class="brandline">${(BY_PIG[p.code]||[]).length} tubos lo llevan</div>
+      </div>
+    </button>`).join("")
+    : `<p class="empty">No hay ningún pigmento con ese criterio. Prueba con el código (PO20, PB15:3) o con el nombre en español.</p>`;
+}
+["#q-pig","#f-fam","#f-fug"].forEach(s=>$(s).addEventListener("input",renderPigs));
+$("#grid-pig").addEventListener("click",e=>{
+  const c = e.target.closest(".card"); if(c) openPig(c.dataset.pig);
+});
+
+/* ============================================================
+   FICHA DE PIGMENTO
+   ============================================================ */
+
+/* búsqueda: PO20, po 20, po-20 y p.o.20 valen igual */
+const norm = x => String(x).toLowerCase().replace(/[\s._-]/g,"");
+function scorePig(p, q){
+  const c = norm(p.code), n = norm(p.name), t = norm(p.note);
+  if(!q) return 5;
+  if(c === q) return 0;
+  if(c.startsWith(q)) return 1;
+  if(c.includes(q)) return 2;
+  if(n.includes(q)) return 3;
+  if(t.includes(q)) return 4;
+  return -1;
+}
+
+function bar(v,max){ return `<div class="bar"><span style="width:${(v/max)*100}%"></span></div>`; }
+
+function openPig(code){
+  const p = PIG[code]; if(!p) return;
+  $("#sheet-wash").style.background = washCSS(p.hex);
+  const tubes = (BY_PIG[code]||[]).slice().sort((a,b)=>a.brand.localeCompare(b.brand));
+  const solidez = {I:"Excelente",II:"Buena",III:"Baja — se apaga con los años"}[p.lf];
+  $("#sheet-body").innerHTML = `
+    <div class="code">${p.code} · ${esc(p.fam)}</div>
+    <h2>${esc(p.name)}</h2>
+    <div class="props">
+      <div class="prop"><b>Transparencia</b>${bar(p.transp,3)}<span>${["Opaco","Semiopaco","Semitransparente","Transparente"][p.transp]}</span></div>
+      <div class="prop"><b>Granulación</b>${bar(p.gran,3)}<span>${["Lisa","Ligera","Marcada","Muy marcada"][p.gran]}</span></div>
+      <div class="prop"><b>Poder de tinción</b>${bar(p.tint,3)}<span>${["Se levanta bien","Media","Alta","Tiñe el papel"][p.tint]}</span></div>
+      <div class="prop"><b>Solidez a la luz</b>${bar({I:3,II:2,III:1}[p.lf],3)}<span${p.lf==="III"?' class="tag risk"':''}>${solidez}</span></div>
+    </div>
+    <p class="note">${esc(p.note)}</p>
+    <div class="guia">
+      <h3>Cómo se comporta</h3>
+      <ul>${comportamiento(p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    </div>
+    <div class="guia">
+      <h3>Cómo sacarle partido</h3>
+      <ul>${consejos(p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    </div>
+    ${(()=>{const ss=socios(p); return ss.length ? `<div class="guia">
+      <h3>Con qué neutraliza bien</h3>
+      <div class="socios">${ss.map(q=>`
+        <button class="socio" data-pig="${q.code}">
+          <span class="sw2" style="background:${rgb2hex(mixRGB(hex2rgb(p.hex),hex2rgb(q.hex)))}"></span>
+          <span>${q.code}<br><em style="font-style:normal;color:var(--muted);font-size:12px">${esc(q.name)}</em></span>
+        </button>`).join("")}</div>
+      <p style="font-family:var(--sans);font-size:12px;color:var(--muted);margin:8px 0 0">El cuadrado muestra la mezcla al 50%.</p>
+    </div>` : "";})()}
+    ${HIST[p.code] ? `<div class="guia">
+      <h3>De dónde viene</h3>
+      <p>${esc(HIST[p.code])}</p>
+    </div>` : ""}
+    <div class="guia">
+      <h3>Para profundizar</h3>
+      <p style="font-size:15px;margin:0">Bruce MacEvoy analiza cada pigmento en su guía de acuarela: pruebas de solidez, curvas de reflectancia y comparativas entre marcas.</p>
+      <a class="hp" href="${hpUrl(p.code)}" target="_blank" rel="noopener">Ver ${p.code} en handprint.com →</a>
+    </div>
+    <div class="tubes-in">
+      <h3>Dónde encontrarlo</h3>
+      ${tubes.length ? tubes.map(t=>`<div class="tube-row"><span>${esc(t.name)}${t.mono?"":' <span class="tag">mezcla</span>'}</span><em>${esc(t.brand)}</em></div>`).join("")
+        : `<p class="empty" style="padding:8px 0">Ninguna de las marcas de la lista lo comercializa suelto.</p>`}
+    </div>`;
+  $("#sheet").hidden = false;
+  $("#sheet-close").focus();
+}
+$("#sheet-body").addEventListener("click", e=>{
+  const b = e.target.closest(".socio"); if(b) openPig(b.dataset.pig);
+});
+$("#sheet-close").addEventListener("click",()=>$("#sheet").hidden=true);
+$("#sheet").addEventListener("click",e=>{ if(e.target.id==="sheet") $("#sheet").hidden=true; });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("#sheet").hidden=true; });
+
+/* ============================================================
+   PESTAÑA 2 · TUBOS
+   ============================================================ */
+const nVerif = TUBES.filter(t=>t.verified).length;
+$("#verify-banner").innerHTML = `<b>Cómo leer esta lista.</b> ${nVerif} de los ${TUBES.length} tubos llevan la composición contrastada contra la carta del fabricante. Los ${TUBES.length-nVerif} restantes aparecen como <em>sin confirmar</em>: el nombre comercial existe, pero no he podido verificar qué pigmento lleva hoy, así que prefiero no decirlo. Esos no entran en Mi caja ni en las mezclas.`;
+
+function renderTubes(){
+  const q = norm($("#q-tubo").value.trim());
+  const marca = $("#f-marca").value, fam = $("#f-fam2").value, mono = $("#f-mono").checked;
+  const list = TUBES.filter(t=>{
+    if(marca && t.brand!==marca) return false;
+    if(fam && t.fam!==fam) return false;
+    if(mono && !t.mono) return false;
+    if(q && !(norm(t.name).includes(q)||norm(t.brand).includes(q)||t.pigs.some(c=>norm(c).includes(q)))) return false;
+    return true;
+  });
+  $("#hits-tubo").textContent = q ? `${list.length} ${list.length===1?"tubo":"tubos"}` : "";
+  $("#grid-tubo").innerHTML = list.length ? list.map(t=>`
+    <button class="card" data-pig="${t.pigs[0]||""}">
+      <div class="swatch" style="background:${washCSS(t.hex)}"></div>
+      <div class="body">
+        <div class="code">${t.pigs.join(" + ")||"sin confirmar"}</div>
+        <div class="name">${esc(t.name)}</div>
+        <div class="brandline">${esc(t.brand)}</div>
+        ${t.note?`<div class="tubenote">${esc(t.note)}</div>`:""}
+      </div>
+    </button>`).join("")
+    : `<p class="empty">Ningún tubo con ese criterio.</p>`;
+}
+["#q-tubo","#f-marca","#f-fam2","#f-mono"].forEach(s=>$(s).addEventListener("input",renderTubes));
+$("#grid-tubo").addEventListener("click",e=>{
+  const c = e.target.closest(".card"); if(c && c.dataset.pig) openPig(c.dataset.pig);
+});
+
+/* ============================================================
+   PESTAÑA 3 · MI CAJA
+   ============================================================ */
+function renderBox(){
+  const q = $("#q-caja").value.trim().toLowerCase();
+  const marca = $("#f-marca2").value;
+  const list = TUBES.filter(t=>{
+    if(!t.pigs.length) return false;
+    if(marca && t.brand!==marca) return false;
+    if(q && !(t.name.toLowerCase().includes(q)||t.brand.toLowerCase().includes(q)||t.pigs.join(" ").toLowerCase().includes(q))) return false;
+    return true;
+  });
+  $("#box-list").innerHTML = list.map(t=>`
+    <label class="boxitem">
+      <input type="checkbox" data-id="${t.id}" ${box.has(t.id)?"checked":""}>
+      <span class="dot" style="background:${t.hex}"></span>
+      <span>${esc(t.name)} <em style="color:var(--muted);font-size:13px;font-style:normal">· ${esc(t.brand)}</em></span>
+    </label>`).join("");
+  renderAnalysis();
+}
+$("#box-list").addEventListener("change",e=>{
+  const cb = e.target.closest("input[type=checkbox]"); if(!cb) return;
+  const id = +cb.dataset.id;
+  cb.checked ? box.add(id) : box.delete(id);
+  saveBox(); renderAnalysis();
+});
+["#q-caja","#f-marca2"].forEach(s=>$(s).addEventListener("input",renderBox));
+$("#clear-box").addEventListener("click",()=>{ box.clear(); saveBox(); renderBox(); });
+
+const myTubes = () => TUBES.filter(t=>box.has(t.id));
+
+function renderAnalysis(){
+  const mine = myTubes();
+  if(!mine.length){
+    $("#box-analysis").innerHTML = `<div class="panel"><h3>La caja está vacía</h3><p style="margin:0;color:var(--muted);font-size:15px">Marca abajo los tubos que tienes. A partir de ahí calculo qué te sobra, qué te falta y qué mezclas te salen.</p></div>`;
+    return;
+  }
+  /* duplicados por pigmento */
+  const byPig = {};
+  mine.forEach(t=>t.pigs.forEach(c=>{(byPig[c]=byPig[c]||[]).push(t)}));
+  const dups = Object.entries(byPig).filter(([,v])=>v.length>1);
+
+  /* familias ausentes */
+  const fams = new Set(mine.map(t=>t.fam));
+  const falta = FAMILIAS.filter(f=>!fams.has(f) && f!=="Blancos" && f!=="Negros y grises");
+
+  /* huecos de comportamiento */
+  const huecos = [];
+  if(!mine.some(t=>t.gran>=2)) huecos.push("No tienes ningún color que granule. Un ultramar o un cerúleo te daría textura en cielos y sombras.");
+  if(!mine.some(t=>t.tint>=3)) huecos.push("No tienes ningún tintóreo fuerte. Un ftalo o un Prusia te da los oscuros profundos que las tierras no alcanzan.");
+  if(!mine.some(t=>t.transp>=3)) huecos.push("Todo lo que tienes es opaco o semiopaco. Sin un transparente, las veladuras se apagan.");
+  if(!mine.some(t=>t.fam==="Tierras")) huecos.push("Sin tierras, cualquier mezcla que quiera ser sobria te va a costar tres pigmentos.");
+  const fug = mine.filter(t=>t.risky);
+
+  $("#box-analysis").innerHTML = `
+    <div class="panel">
+      <h3>Qué tienes</h3>
+      <p style="margin:0 0 8px;font-size:15px">${mine.length} tubos, ${Object.keys(byPig).length} pigmentos distintos, ${fams.size} familias.</p>
+      ${dups.length?`<p style="margin:0 0 6px;font-size:15px">Repetidos:</p><ul>${dups.map(([c,v])=>`<li>${c} en ${v.map(t=>esc(t.name)).join(" y ")}</li>`).join("")}</ul>`
+        :`<p style="margin:0;color:var(--muted);font-size:15px">Sin pigmentos repetidos. La caja está limpia.</p>`}
+    </div>
+    <div class="panel">
+      <h3>Qué te falta</h3>
+      ${falta.length?`<ul>${falta.map(f=>`<li>Ningún ${f.toLowerCase().replace(/s$/,"")}</li>`).join("")}</ul>`:""}
+      ${huecos.length?`<ul>${huecos.map(h=>`<li>${h}</li>`).join("")}</ul>`:""}
+      ${!falta.length && !huecos.length?`<p style="margin:0;color:var(--muted);font-size:15px">La caja cubre todas las familias y los tres comportamientos. No necesitas comprar nada.</p>`:""}
+    </div>
+    ${fug.length?`<div class="panel"><h3>Cuidado con estos</h3><ul>${fug.map(t=>`<li>${esc(t.name)} (${esc(t.brand)}) lleva ${t.pigs.filter(c=>PIG[c].lf==="III").join(", ")}, que pierde color con los años.</li>`).join("")}</ul></div>`:""}`;
+}
+
+/* ============================================================
+   PESTAÑA 4 · MEZCLAS
+   ============================================================ */
+function mixInfo(a,b){
+  const rgb = mixRGB(hex2rgb(a.hex), hex2rgb(b.hex));
+  const lab = rgb2lab(rgb);
+  const cAvg = (chroma(a.lab)+chroma(b.lab))/2;
+  const drop = cAvg>0 ? 1 - chroma(lab)/cAvg : 0;
+  const avisos = [];
+  if(drop > 0.5) avisos.push(["risk","se enturbia"]);
+  else if(drop > 0.3) avisos.push(["","pierde saturación"]);
+  if(a.tint>=3 && b.tint>=3) avisos.push(["risk","no se levanta"]);
+  if(a.gran>=2 && b.gran>=2) avisos.push(["","granula mucho"]);
+  if(a.pigs.length+b.pigs.length > 3) avisos.push(["","demasiados pigmentos"]);
+  if(!avisos.length) avisos.push(["","mezcla limpia"]);
+  return {hex:rgb2hex(rgb), avisos, drop};
+}
+
+function renderMixes(){
+  const mine = myTubes();
+  if(mine.length<2){
+    $("#mix-out").innerHTML = `<p class="empty">Marca al menos dos tubos en «Mi caja» y aquí aparecen todas las combinaciones de dos, con lo que sale y con lo que puede salir mal.</p>`;
+    return;
+  }
+  const pairs = [];
+  for(let i=0;i<mine.length;i++) for(let j=i+1;j<mine.length;j++){
+    pairs.push({a:mine[i], b:mine[j], m:mixInfo(mine[i],mine[j])});
+  }
+  pairs.sort((x,y)=>x.m.drop - y.m.drop);
+  $("#mix-out").innerHTML = `
+    <p class="lede" style="margin:0 0 18px">${pairs.length} combinaciones de dos colores, de la más limpia a la más turbia.</p>
+    ${pairs.map(p=>`
+      <div class="mixrow">
+        <div class="mixchips">
+          <i style="background:${p.a.hex}"></i><i style="background:${p.m.hex}"></i><i style="background:${p.b.hex}"></i>
+        </div>
+        <div>
+          <div class="mixname">${esc(p.a.name)} + ${esc(p.b.name)}</div>
+          <div class="mixmeta">
+            <span>${p.a.pigs.concat(p.b.pigs).join(" + ")}</span>
+            ${p.m.avisos.map(([k,t])=>`<span class="tag ${k}">${t}</span>`).join("")}
+          </div>
+        </div>
+      </div>`).join("")}`;
+}
+
+/* ============================================================
+   PESTAÑA 5 · QUÉ COLORES USO
+   ============================================================ */
+const $st = () => $("#photo-status");
+
+function cargarArchivo(f){
+  if(!f){ $st().textContent = "No he recibido ningún archivo."; return; }
+  if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name||"")){
+    $st().textContent = "Eso no parece una imagen. Sube un JPG o un PNG."; return;
+  }
+  $st().textContent = "Leyendo la foto…";
+  const fr = new FileReader();
+  fr.onerror = () => { $st().textContent = "El navegador no ha podido leer el archivo."; };
+  fr.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      $("#preview").src = img.src;
+      $("#preview").hidden = false;
+      $st().textContent = "Calculando recetas…";
+      setTimeout(() => {
+        try { analyse(img); $st().textContent = ""; }
+        catch(err){ $st().textContent = "No he podido analizar la foto: " + err.message; }
+      }, 30);
+    };
+    img.onerror = () => {
+      $st().textContent = "Este formato no se abre en el navegador. Si la foto viene de un iPhone será HEIC: en Ajustes › Cámara › Formatos elige «Más compatible», o expórtala como JPG.";
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(f);
+}
+
+$("#pick").addEventListener("click", () => {
+  $st().textContent = "";
+  try { $("#file").click(); }
+  catch(e){ $st().textContent = "Este navegador no deja abrir el selector de archivos. Arrastra la foto sobre este recuadro o pégala con Ctrl+V."; }
+});
+$("#file").addEventListener("change", e => cargarArchivo(e.target.files && e.target.files[0]));
+
+/* arrastrar y soltar */
+const zona = document.querySelector(".drop");
+["dragenter","dragover"].forEach(ev => zona.addEventListener(ev, e => {
+  e.preventDefault(); zona.style.borderColor = "var(--ink)";
+}));
+["dragleave","drop"].forEach(ev => zona.addEventListener(ev, e => {
+  e.preventDefault(); zona.style.borderColor = "";
+}));
+zona.addEventListener("drop", e => {
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  cargarArchivo(f);
+});
+
+/* pegar desde el portapapeles */
+document.addEventListener("paste", e => {
+  if($("#tab-foto").hidden) return;
+  const it = [...(e.clipboardData ? e.clipboardData.items : [])].find(i => i.type.startsWith("image/"));
+  if(it) cargarArchivo(it.getAsFile());
+});
+
+/* ejemplo para comprobar que el cálculo va, aunque el navegador bloquee los archivos */
+$("#demo").addEventListener("click", () => {
+  const cv = document.createElement("canvas"); cv.width = 120; cv.height = 90;
+  const cx = cv.getContext("2d");
+  const g = cx.createLinearGradient(0,0,120,90);
+  g.addColorStop(0,"#8a5a32"); g.addColorStop(.45,"#2a4a9e"); g.addColorStop(1,"#e8b23a");
+  cx.fillStyle = g; cx.fillRect(0,0,120,90);
+  cx.fillStyle = "#7E2A24"; cx.fillRect(0,60,120,30);
+  const img = new Image();
+  img.onload = () => {
+    $("#preview").src = img.src; $("#preview").hidden = false;
+    try { analyse(img); $st().textContent = ""; }
+    catch(err){ $st().textContent = "Fallo en el cálculo: " + err.message; }
+  };
+  img.src = cv.toDataURL();
+});
+
+function kmeans(pixels,k,iters){
+  let cents = [];
+  for(let i=0;i<k;i++) cents.push(pixels[Math.floor(i*pixels.length/k)].slice());
+  let groups = [];
+  for(let it=0; it<iters; it++){
+    groups = Array.from({length:k},()=>[]);
+    pixels.forEach(p=>{
+      let best=0,bd=1e9;
+      cents.forEach((c,i)=>{const d=dE(p,c); if(d<bd){bd=d;best=i;}});
+      groups[best].push(p);
+    });
+    cents = cents.map((c,i)=>{
+      const g=groups[i]; if(!g.length) return c;
+      return [0,1,2].map(j=>g.reduce((s,p)=>s+p[j],0)/g.length);
+    });
+  }
+  return cents.map((c,i)=>({lab:c, weight:groups[i].length/pixels.length}))
+              .filter(c=>c.weight>0.02).sort((a,b)=>b.weight-a.weight);
+}
+
+function lab2rgbApprox(lab){
+  let best=[128,128,128], bd=1e9;
+  for(let r=0;r<256;r+=16) for(let g=0;g<256;g+=16) for(let b=0;b<256;b+=16){
+    const d=dE(rgb2lab([r,g,b]),lab); if(d<bd){bd=d;best=[r,g,b];}
+  }
+  for(let r=Math.max(0,best[0]-16);r<=Math.min(255,best[0]+16);r+=4)
+   for(let g=Math.max(0,best[1]-16);g<=Math.min(255,best[1]+16);g+=4)
+    for(let b=Math.max(0,best[2]-16);b<=Math.min(255,best[2]+16);b+=4){
+      const d=dE(rgb2lab([r,g,b]),lab); if(d<bd){bd=d;best=[r,g,b];}
+    }
+  return best;
+}
+
+/* paleta de referencia cuando la caja está vacía: un tubo por pigmento clásico */
+const REF_PIGS = ["PY3","PY97","PY150","PY35","PO73","PR255","PR254","PV19","PR122","PR101",
+  "PB29","PB28","PB35","PB15:3","PB27","PB60","PG7","PG36","PG18","PG50","PBr7","PY43","PBk9","PBk11"];
+function refPool(){
+  const out=[];
+  REF_PIGS.forEach(c=>{
+    const t = TUBES.find(t=>t.mono && t.pigs[0]===c && t.verified);
+    if(t) out.push(t);
+  });
+  return out;
+}
+
+/* candidatos: la caja del usuario, o la referencia; recortada a los más útiles */
+function pool(clusters){
+  let base = myTubes().filter(t=>t.pigs.length);
+  const propia = base.length >= 2;
+  if(!propia) base = refPool();
+  if(base.length > 34){
+    base = base.map(t=>({t, d: Math.min(...clusters.map(c=>dE(t.lab, c.lab)))}))
+               .sort((a,b)=>a.d-b.d).slice(0,34).map(x=>x.t);
+  }
+  return {base, propia};
+}
+
+const RATIOS = [0.15,0.3,0.5,0.7,0.85];
+function recetas(targetLab, base){
+  const opts = [];
+  base.forEach(t=>opts.push({d:dE(t.lab,targetLab), hex:t.hex, txt:esc(t.name),
+    sub:esc(t.brand)+" · "+t.pigs.join(" + "), solo:true, a:t}));
+  for(let i=0;i<base.length;i++) for(let j=i+1;j<base.length;j++){
+    let mejor=null;
+    RATIOS.forEach(w=>{
+      const rgb = mixRGB(hex2rgb(base[i].hex),hex2rgb(base[j].hex),w);
+      const d = dE(rgb2lab(rgb),targetLab);
+      if(!mejor || d<mejor.d) mejor = {d, w, rgb};
+    });
+    const pa = Math.round((1-mejor.w)*100);
+    opts.push({d:mejor.d, hex:rgb2hex(mejor.rgb),
+      txt:`${esc(base[i].name)} <b style="font-weight:400;color:var(--muted)">${pa}%</b> + ${esc(base[j].name)} <b style="font-weight:400;color:var(--muted)">${100-pa}%</b>`,
+      sub:"", solo:false, a:base[i], b:base[j]});
+  }
+  opts.sort((x,y)=>x.d-y.d);
+  const elegidas=[], usadas=new Set();
+  let mejorSolo = opts.find(o=>o.solo);
+  if(mejorSolo) elegidas.push(mejorSolo);
+  for(const o of opts){
+    if(elegidas.length>=4) break;
+    if(o.solo) continue;
+    const k = [o.a.id,o.b.id].sort().join("-");
+    if(usadas.has(k)) continue;
+    usadas.add(k); elegidas.push(o);
+  }
+  return elegidas;
+}
+
+function ajuste(d){
+  if(d < 6)  return ['good','clavado'];
+  if(d < 12) return ['good','muy cerca'];
+  if(d < 22) return ['','aproximado'];
+  return ['bad','no llegas con estos colores'];
+}
+
+function analyse(img){
+  const W = 140, H = Math.max(1,Math.round(img.height*W/img.width));
+  const cv = document.createElement("canvas"); cv.width=W; cv.height=H;
+  const ctx = cv.getContext("2d",{willReadFrequently:true});
+  ctx.drawImage(img,0,0,W,H);
+  const data = ctx.getImageData(0,0,W,H).data;
+  const px = [];
+  for(let i=0;i<data.length;i+=4) px.push(rgb2lab([data[i],data[i+1],data[i+2]]));
+  const clusters = kmeans(px,6,10);
+  const {base, propia} = pool(clusters);
+
+  const uso = new Map();
+  const bloques = clusters.map(c=>{
+    const rgb = lab2rgbApprox(c.lab);
+    const rs = recetas(c.lab, base);
+    if(rs[0]){ [rs[0].a, rs[0].b].forEach(t=>{ if(t) uso.set(t.id,(uso.get(t.id)||0)+c.weight); }); }
+    return `<div class="tone">
+      <div class="tone-head">
+        <div class="sw" style="background:${rgb2hex(rgb)}"></div>
+        <div class="meta">
+          <h3>${Math.round(c.weight*100)}% de la imagen</h3>
+          <div class="sub">${rs.length} formas de llegar a este tono</div>
+        </div>
+      </div>
+      ${rs.map(o=>{
+        const [k,txt] = ajuste(o.d);
+        let avisos = "";
+        if(!o.solo){
+          const m = mixInfo(o.a,o.b);
+          avisos = m.avisos.filter(([,t])=>t!=="mezcla limpia")
+                    .map(([kk,t])=>`<span class="tag ${kk}">${t}</span>`).join("");
+        }
+        return `<div class="opt">
+          <div class="sw" style="background:${o.hex}"></div>
+          <div>
+            <div class="txt">${o.txt}</div>
+            <div class="sub">${o.sub}${avisos}</div>
+          </div>
+          <span class="fit ${k}">${txt}</span>
+        </div>`;
+      }).join("")}
+    </div>`;
+  }).join("");
+
+  const min = [...uso.entries()].sort((a,b)=>b[1]-a[1])
+    .map(([id])=>TUBES.find(t=>t.id===id)).filter(Boolean);
+
+  $("#photo-out").innerHTML = `
+    <h2 style="font-weight:400;font-size:25px;margin:36px 0 6px">Los tonos que la sostienen</h2>
+    <p class="lede" style="margin:0 0 26px">${propia
+      ? "Recetas calculadas con los tubos que has marcado en Mi caja."
+      : "No has marcado tu caja, así que uso una paleta de referencia de pigmentos clásicos. Marca tus tubos en Mi caja y las recetas saldrán con lo que tienes."}</p>
+    ${bloques}
+    ${min.length ? `<div class="panel" style="margin-top:8px">
+      <h3>Paleta mínima</h3>
+      <p style="margin:0 0 8px;font-size:15px">Con estos ${min.length} colores cubres toda la foto:</p>
+      <ul>${min.map(t=>`<li>${esc(t.name)} <em style="font-style:normal;color:var(--muted);font-family:var(--sans);font-size:13px">· ${esc(t.brand)} · ${t.pigs.join(" + ")}</em></li>`).join("")}</ul>
+    </div>` : ""}`;
+}
+
+/* ============================================================
+   GUÍA POR PIGMENTO
+   ============================================================ */
+/* handprint organiza su guía por familias, con un ancla por pigmento */
+const HP_TIERRA = ["PY42","PY43","PY119","PO48","PO49","PO65","PR101","PR102","PR175","PR206",
+  "PR233","PBr6","PBr7","PBr11","PBr24","PBr25","PBr33","PBr41"];
+const HP_MAGENTA = ["PR60","PR122","PR171","PR202","PV19","PV32","PV42","NR9","NR4"];
+const HP_VIOLETA = ["PV14","PV15","PV16","PV23","PV39","PV49","PR88"];
+const HP_BLANCO  = ["PW4","PW6","PBk6","PBk7","PBk8","PBk9","PBk10","PBk11","PBk19","PBk31"];
+function hpUrl(code){
+  const c = code.split(":")[0];
+  const base = "https://www.handprint.com/HP/WCL/";
+  if(HP_TIERRA.includes(c))  return base+"watere.html#"+c;
+  if(HP_MAGENTA.includes(c)) return base+"waterc.html#"+(c==="PV19"?"PV19R":c);
+  if(HP_VIOLETA.includes(c)) return base+"waterv.html#"+c;
+  if(HP_BLANCO.includes(c))  return base+"waterw.html#"+c;
+  if(c.startsWith("PY"))  return base+"watery.html#"+c;
+  if(c.startsWith("PO"))  return base+"watero.html#"+c;
+  if(c.startsWith("PR"))  return base+"waterr.html#"+c;
+  if(c.startsWith("PB") && !c.startsWith("PBr") && !c.startsWith("PBk")) return base+"waterb.html#"+c;
+  if(c.startsWith("PG"))  return base+"waterg.html#"+c;
+  if(c.startsWith("PV"))  return base+"waterv.html#"+c;
+  return base+"palette1.html";
+}
+
+const HIST = {"PB29": "Ultramar. Durante siglos se molía lapislázuli traído de Afganistán y costaba más que el oro; por eso se reservaba para el manto de la Virgen. En 1826 la Société d'Encouragement de París premió a Jean-Baptiste Guimet por sintetizarlo con caolín, azufre y sosa, y el precio se desplomó. El sintético y el mineral tienen la misma estructura química, pero el molido del sintético es más regular: de ahí que granule de forma más previsible.", "PBr7": "Tierras naturales. Son arcillas con óxido de hierro extraídas de yacimientos concretos, y su color depende del yacimiento y de si se han calcinado. La siena natural viene de Toscana, y tostada al fuego se vuelve roja. Las sombras llevan además manganeso, que las oscurece y acelera el secado del óleo. Un PBr7 de Chipre y otro italiano no son el mismo color aunque compartan código.", "PR101": "Óxido de hierro sintético. Fabricado desde el siglo XIX calcinando sulfato de hierro, sustituyó a las tierras rojas de yacimiento por ser más barato, uniforme y potente. Bajo este único código caben el rojo indio, el veneciano, el caput mortuum y las sienas tostadas modernas: la diferencia está en la temperatura de calcinado y el tamaño de partícula, no en la química.", "PY43": "Ocre amarillo natural. El pigmento más antiguo que usa el ser humano: está en las cuevas de Altamira y Lascaux. Es arcilla con óxido de hierro hidratado. Los ocres franceses del Roussillon y los italianos han sido el patrón de calidad durante siglos. Granula porque la partícula natural es irregular, y eso es justo lo que se le pide.", "PG7": "Verde ftalocianina. Descubierto por accidente en 1928 en una fábrica escocesa de ftalimida, cuando apareció un residuo azul intenso en el reactor. La industria lo desarrolló en los años treinta y cambió la paleta del siglo XX: por primera vez había un verde y un azul baratos, potentes y absolutamente sólidos. Su poder tintóreo es tan alto que casi nadie lo usa puro.", "PB15:3": "Azul ftalocianina. Hermano químico del verde ftalo, sintetizado en los años treinta a partir del mismo hallazgo. Desplazó al azul de Prusia por ser más sólido y más limpio. Los subíndices indican la forma cristalina: la 15:3 tira a verde y la 15:6 a rojo, y esa diferencia decide qué violetas y qué verdes vas a poder mezclar.", "PV19": "Quinacridona. Familia sintetizada en los laboratorios de DuPont en los años cincuenta, primero para pintura de automóvil, donde tenía que aguantar años de sol. Ese origen explica su solidez. Según cómo se cristalice, el mismo PV19 sale rosa o violeta: por eso conviven en el mercado como Quinacridone Rose y Quinacridone Violet siendo el mismo código.", "PB27": "Azul de Prusia. El primer pigmento sintético moderno, obtenido por accidente en Berlín hacia 1706 por el fabricante de colores Diesbach, que contaminó una receta de laca roja con potasa impura. Se extendió rapidísimo por su precio y llegó a Japón, donde tiñe la ola de Hokusai. Es ferrocianuro de hierro: se decolora en ambiente alcalino y a veces se recupera en la oscuridad.", "PB28": "Azul de cobalto. Aluminato de cobalto desarrollado por Thénard en 1802 por encargo del gobierno francés, que buscaba un azul estable y menos caro que el ultramar natural. Es poco potente y caro, y aun así nadie lo sustituye: su transparencia media y su granulación fina dan un cielo que el ftalo no imita.", "PY35": "Amarillo de cadmio. Sulfuro de cadmio, descubierto el metal en 1817 y comercializado como pigmento desde mediados del XIX. Su opacidad y su fuerza lo hicieron indispensable en óleo. En acuarela es más discutido: cubre el papel, que es lo contrario de lo que suele buscarse. Su toxicidad y el coste ambiental empujan hacia sustitutos sin cadmio.", "PR108": "Rojo de cadmio. Sulfoseleniuro de cadmio, incorporado hacia 1910. Fue el sustituto del bermellón de mercurio, que ennegrecía. Muy opaco y muy sólido. Los pirrol modernos ofrecen el mismo tono con transparencia y sin metal pesado.", "PBk9": "Negro de marfil. Originalmente se calcinaba marfil; hoy son huesos, y de ahí que también se llame negro de hueso. Es fosfato de calcio con carbón, y por eso resulta más cálido y menos agresivo en mezcla que los negros de humo. En diluciones muy finas tira a pardo.", "PB35": "Azul cerúleo. Estannato de cobalto, desarrollado hacia 1860. Su nombre viene de caelum, cielo. Es opaco y granula, con un punto lechoso que lo hace insustituible en cielos bajos y en niebla marina. Caro, porque lleva cobalto y estaño.", "PG18": "Viridian. Óxido de cromo hidratado, patentado en Francia en 1859 por Guignet. Fue el primer verde transparente y sólido de la historia, y por eso los impresionistas lo adoptaron en masa. Es débil comparado con el ftalo, pero granula y no domina las mezclas, que es exactamente por lo que se sigue comprando.", "PY150": "Amarillo de níquel azo. Complejo metálico moderno, de los años setenta. Muy transparente y algo apagado. Ganó protagonismo cuando se descatalogaron las quinacridonas doradas PO48 y PO49: hoy casi todos los Quinacridone Gold del mercado son mezclas montadas sobre este pigmento.", "PR122": "Quinacridona magenta. De la misma familia que el PV19 y del mismo origen industrial. Es el magenta de la síntesis sustractiva, así que con un ftalo azul y un amarillo limón cubre casi todo el círculo cromático. Fue lo que hizo posibles las paletas de tres colores modernas.", "PW6": "Blanco de titanio. Dióxido de titanio, industrializado en los años veinte. Sustituyó al blanco de plomo, que es tóxico y ennegrece con el azufre del aire. Es el blanco más cubriente que existe y está en casi todo: pinturas de pared, plásticos, papel y pasta de dientes.", "PW4": "Blanco de cinc. Óxido de cinc, propuesto en el XVIII como alternativa no tóxica al plomo y comercializado como blanco de China desde 1834. Cubre mucho menos que el titanio, lo que en acuarela es una ventaja: permite velos lechosos en lugar de tapar.", "PB60": "Azul indantreno. Colorante de tina desarrollado a principios del XX para teñir algodón, con una solidez excepcional. Como pigmento es un azul oscuro y transparente que sustituye al índigo sin su fugacidad.", "PG36": "Verde ftalocianina bromada. Variante del PG7 en la que se sustituyen átomos de cloro por bromo, lo que desplaza el tono hacia el amarillo. Mismo comportamiento: transparente, sólido y con un poder tintóreo que obliga a dosificar con la punta del pincel.", "PR254": "Rojo pirrol. Familia DPP descubierta en los años setenta por químicos de Ciba tras una reacción fallida. Se usó primero en carrocerías: el rojo de muchos coches deportivos es un pirrol. Llegó a las bellas artes en los noventa como el sustituto limpio del cadmio.", "PR255": "Escarlata pirrol. Misma familia que el PR254, un paso hacia el naranja. Es el sustituto moderno del bermellón y del cadmio rojo claro, con la ventaja de ser transparente y no llevar metal pesado.", "PY42": "Óxido de hierro amarillo sintético. Los pigmentos Marte, fabricados desde el siglo XIX precipitando sales de hierro. Frente al ocre natural son más uniformes, más potentes y menos granulados: más limpios y menos interesantes.", "PBk11": "Negro de Marte. Óxido de hierro negro, magnetita sintética. Su partícula es pesada y sedimenta con fuerza, lo que produce esos grises con textura lunar que algunas marcas venden como colores de efecto.", "PV23": "Violeta dioxazina. Colorante desarrollado en los años cincuenta, de un poder tintóreo enorme. Es el violeta más intenso disponible. Su punto débil está en las capas muy finas, donde puede aclararse con los años pese a estar bien calificado en masa.", "PO20": "Naranja de cadmio. Mismo grupo químico que los amarillos y rojos de cadmio, con la proporción de selenio ajustada. Opaco, potente y caro.", "PY3": "Amarillo Hansa claro. Los arilamidas aparecen hacia 1909 en Alemania como alternativa barata a los cromos de plomo. Limpio y frío, con solidez media: es el amarillo de estudio por excelencia, no el de obra para colgar.", "PY97": "Amarillo Hansa medio. De la misma familia que el PY3 pero con mejor solidez y tono más neutro. Al no tirar ni a verde ni a naranja sirve igual para mezclar verdes que naranjas, lo que lo convierte en el amarillo único de muchas paletas cortas.", "PG50": "Verde de cobalto turquesa. Óxido mixto de cobalto y titanio, cocido a alta temperatura como un esmalte cerámico. De ahí su opacidad y su granulación. Es el turquesa del mar poco profundo.", "PB36": "Cerúleo de cromo. Óxido de cobalto y cromo. Bajo el mismo código conviven desde un cerúleo casi azul hasta turquesas francamente verdes, según la proporción de cromo. Conviene mirar la muestra, no el código."};
+const COMPL = {"Amarillos":"Violetas","Violetas":"Amarillos","Naranjas":"Azules",
+  "Azules":"Naranjas","Rojos":"Verdes","Verdes":"Rojos","Tierras":"Azules",
+  "Negros y grises":null,"Blancos":null};
+
+function comportamiento(p){
+  const f = [];
+  f.push(["Opaco: cubre el papel y tapa lo que hay debajo, así que va en la primera capa, no en veladura.",
+          "Semiopaco: en aguada fina deja pasar la luz del papel, pero cargado ya cubre.",
+          "Semitransparente: aguanta bien una veladura encima sin apagarse.",
+          "Transparente: la luz atraviesa la capa y rebota en el papel. Es el que sirve para veladuras."][p.transp]);
+  if(p.gran >= 2) f.push("Granula con fuerza: se deposita en el grano del papel y deja textura. En papel rugoso se nota mucho más que en satinado.");
+  else if(p.gran === 1) f.push("Granula un poco, lo justo para que la aguada no quede plana.");
+  else f.push("No granula: seca liso y uniforme.");
+  if(p.tint >= 3) f.push("Tiñe el papel: una vez puesto no se levanta. Hay que decidir antes de cargar el pincel.");
+  else if(p.tint === 2) f.push("Tiñe algo; se levanta a medias con pincel húmedo.");
+  else f.push("Se levanta bien con un pincel húmedo o una esponja, así que permite corregir y sacar luces.");
+  if(p.lf === "III") f.push("Poco sólido a la luz: en obra que vaya a colgarse se apaga con los años. Para apuntes vale; para vender, no.");
+  else if(p.lf === "II") f.push("Solidez buena, no máxima. En aguadas muy diluidas y a pleno sol puede perder algo de fuerza.");
+  return f;
+}
+
+function consejos(p){
+  const c = [];
+  if(p.transp >= 3 && p.tint >= 3) c.push("Empieza con muy poca cantidad: en transparente y tintóreo, el error se ve enseguida y no se puede quitar.");
+  if(p.gran >= 2 && p.transp <= 1) c.push("Trabájalo con mucha agua y sin remover: es donde saca la textura.");
+  if(p.transp === 0) c.push("Úsalo puro o casi puro. Mezclado con transparentes enturbia rápido.");
+  if(p.tint === 0 && p.gran >= 2) c.push("Es el candidato ideal para cielos y sombras que luego quieras aclarar levantando pigmento.");
+  const comp = COMPL[p.fam];
+  if(comp) c.push(`Su complementario está en los ${comp.toLowerCase()}: ahí es donde neutraliza sin ensuciar.`);
+  if(!c.length) c.push("Pigmento de comportamiento neutro: se deja mezclar con casi todo sin sorpresas.");
+  return c;
+}
+
+function socios(p){
+  const comp = COMPL[p.fam];
+  if(!comp) return [];
+  return P.map(x=>PIG[x[0]]).filter(q=>q.fam===comp && q.lf==="I")
+    .map(q=>({q, n:(BY_PIG[q.code]||[]).length}))
+    .sort((a,b)=>b.n-a.n).slice(0,4).map(x=>x.q);
+}
+
+/* ============================================================
+   PESTAÑA 6 · PALETAS DE PINTORES
+   ============================================================ */
+const PALETAS = [
+{n:"Anders Zorn", a:"1860-1920", pigs:[["Blanco","PW6"],["Ocre amarillo","PY43"],["Bermellón","PR255"],["Negro marfil","PBk9"]],
+ nota:"La paleta limitada más citada de la historia. Cuatro colores y ningún azul: el negro marfil, que tira a frío, hace de azul en las mezclas.",
+ src:"El propio Zorn usó más colores de los que se le atribuyen; la «paleta Zorn» de cuatro es una simplificación posterior, muy útil como ejercicio.",
+ mez:[[["PY43","PBk9"],"Verdes oliva apagados, sin usar ningún verde"],
+      [["PR255","PBk9"],"Marrones y granates de sombra"],
+      [["PBk9","PW6"],"El gris que hace de azul en cielos y ropa"],
+      [["PR255","PY43"],"Carnaciones cálidas"]]},
+
+{n:"John Singer Sargent", a:"1856-1925", pigs:[["Amarillo cadmio","PY35"],["Ocre amarillo","PY43"],["Bermellón","PR255"],["Laca de granza","PR83"],["Siena tostada","PBr7"],["Sombra","PBr7"],["Azul cobalto","PB28"],["Ultramar","PB29"],["Azul de Prusia","PB27"],["Viridian","PG18"],["Negro marfil","PBk9"],["Blanco","PW6"]],
+ nota:"Predominan las tierras y hay tres azules distintos para separar planos. El viridian era su verde de cabecera y casi nunca lo usaba puro.",
+ src:"Reconstruida a partir del análisis técnico de sus paletas conservadas (Harvard Art Museums, MFA Boston) y de los pigmentos identificados en once acuarelas suyas.",
+ mez:[[["PG18","PR83"],"Grises de sombra vibrantes, su recurso más reconocible"],
+      [["PB29","PBr7"],"El gris cálido-frío de toda la pintura de paisaje"],
+      [["PB27","PY43"],"Verdes de vegetación en sombra"],
+      [["PR255","PBr7"],"Ladrillo, tejado y piel al sol"]]},
+
+{n:"J. M. W. Turner", a:"1775-1851", pigs:[["Gutagamba","PY150"],["Ocre amarillo","PY43"],["Bermellón","PR255"],["Laca de granza","PR83"],["Azul de Prusia","PB27"],["Índigo","PB60"],["Ultramar","PB29"],["Siena tostada","PBr7"],["Sombra natural","PBr7"]],
+ nota:"Paleta corta y muy transparente. Construía la luz dejando el papel en blanco y lavando, no añadiendo blanco.",
+ src:"Basada en los estudios técnicos de la Tate sobre su obra sobre papel. Turner experimentaba constantemente: usó también pigmentos fugitivos que hoy han virado.",
+ mez:[[["PB27","PY150"],"Los verdes de sus paisajes, sin verde en la caja"],
+      [["PR83","PB60"],"Violetas de atardecer"],
+      [["PY150","PR255"],"El naranja de sol que domina sus últimas obras"],
+      [["PB60","PBr7"],"Grises de tormenta"]]},
+
+{n:"Thomas Girtin", a:"1775-1802", pigs:[["Ocre amarillo","PY43"],["Gutagamba","PY150"],["Rojo indio","PR101"],["Laca de granza","PR83"],["Índigo","PB60"],["Azul de Prusia","PB27"],["Sombra natural","PBr7"]],
+ nota:"El inventor del paisaje inglés moderno en acuarela. Trabajaba sobre papel cálido y con muy pocos colores, apoyándose en el valor más que en el color.",
+ src:"Paleta típica de la escuela inglesa de su momento, reconstruida a partir de estudios de conservación. No hay una lista firmada por él.",
+ mez:[[["PB60","PR101"],"Los grises violáceos de sus lejanías"],
+      [["PY43","PB60"],"Verdes apagados de campo inglés"],
+      [["PR101","PBr7"],"Tejados y tierra"]]},
+
+{n:"John Sell Cotman", a:"1782-1842", pigs:[["Ocre amarillo","PY43"],["Gutagamba","PY150"],["Bermellón","PR255"],["Índigo","PB60"],["Azul de Prusia","PB27"],["Siena tostada","PBr7"],["Sombra natural","PBr7"]],
+ nota:"Trabajaba por planos planos de color, casi de cartel. Su fuerza está en la forma y en la simplificación, no en la variedad de pigmentos.",
+ src:"Paleta de la escuela de Norwich, reconstruida a partir de estudios de conservación.",
+ mez:[[["PB60","PY150"],"El verde plano de sus árboles"],
+      [["PBr7","PB60"],"El gris que usa para toda la sombra arquitectónica"],
+      [["PR255","PY43"],"El cálido de los edificios"]]},
+
+{n:"Joaquín Sorolla", a:"1863-1923", pigs:[["Blanco","PW6"],["Amarillo cadmio claro","PY35"],["Ocre amarillo","PY43"],["Bermellón","PR255"],["Laca de granza","PR83"],["Verde esmeralda","PG18"],["Azul cobalto","PB28"],["Ultramar","PB29"],["Siena tostada","PBr7"]],
+ nota:"Sin negro. Las sombras se construyen con violetas y azules, que es lo que da esa luz mediterránea que nadie ha vuelto a igualar.",
+ src:"Reconstruida a partir de estudios sobre su obra y de los materiales conservados en el Museo Sorolla. Es una paleta de óleo: aquí se traduce a sus equivalentes en acuarela.",
+ mez:[[["PB29","PR83"],"El violeta de sus sombras sobre arena"],
+      [["PB28","PY35"],"Verdes de mar poco saturados"],
+      [["PR255","PW6"],"El rosa de la piel al sol"],
+      [["PB29","PBr7"],"Grises cálidos de sombra en la ropa blanca"]]}
+];
+
+const PENDIENTES = ["Trevor Chamberlain","Charles Reid","Joseph Zbukvic","Robert Wade",
+  "Edward Seago","William Russell Flint","Arthur Melville","Rafael García Bonillo"];
+
+function tuboDe(code){
+  return TUBES.find(t=>t.mono && t.pigs[0]===code && t.verified)
+      || TUBES.find(t=>t.pigs.includes(code) && t.verified);
+}
+function hexDe(code){ return PIG[code] ? PIG[code].hex : "#999"; }
+
+function renderPaletas(){
+  const bloques = PALETAS.map((p,idx)=>`
+    <div class="pal">
+      <h3>${esc(p.n)}</h3>
+      <div class="anos">${p.a}</div>
+      <div class="palstrip">${p.pigs.map(([,c])=>`<i style="background:${washCSS(hexDe(c))}"></i>`).join("")}</div>
+      <div class="palcols">${p.pigs.map(([nm,c])=>`
+        <div class="palcol"><span class="dot" style="background:${hexDe(c)}"></span>
+          <span>${esc(nm)} <em style="font-style:normal;color:var(--muted);font-family:var(--sans);font-size:12.5px">${c}</em></span>
+        </div>`).join("")}</div>
+      <p class="nota">${esc(p.nota)}</p>
+      <div style="margin-top:18px">
+        ${p.mez.map(([cs,txt])=>{
+          const rgb = cs.map(c=>hex2rgb(hexDe(c))).reduce((a,b)=>mixRGB(a,b));
+          return `<div class="palmix">
+            <div class="sw" style="background:${rgb2hex(rgb)}"></div>
+            <div><div class="q">${cs.map(c=>esc((p.pigs.find(x=>x[1]===c)||["",c])[0])).join(" + ")}</div>
+            <div class="r">${esc(txt)} · ${cs.join(" + ")}</div></div>
+          </div>`;
+        }).join("")}
+      </div>
+      <p class="fuente">${esc(p.src)}</p>
+      <button class="btn ghost" data-pal="${idx}" style="margin-top:14px">Cargar esta paleta en Mi caja</button>
+    </div>`).join("");
+
+  $("#paletas-out").innerHTML = `
+    <p class="lede" style="margin:0 0 26px">Paletas documentadas y las mezclas que las sostienen. Puedes cargar cualquiera en Mi caja y usarla en Mezclas y en Qué colores uso.</p>
+    ${bloques}
+    <div class="pendiente">
+      <p style="margin:0 0 8px;font-size:15.5px"><b>Pendientes de verificar:</b> ${PENDIENTES.join(", ")}.</p>
+      <p style="margin:0;font-size:14.5px;color:var(--muted)">Sus paletas están publicadas en sus propios libros y cursos, no en fuentes que yo pueda contrastar. Prefiero dejarlas fuera antes que inventarlas.</p>
+    </div>`;
+
+  $("#paletas-out").querySelectorAll("[data-pal]").forEach(b=>b.addEventListener("click",()=>{
+    const p = PALETAS[+b.dataset.pal];
+    box.clear();
+    const faltan = [];
+    p.pigs.forEach(([nm,c])=>{ const t = tuboDe(c); if(t) box.add(t.id); else faltan.push(nm); });
+    saveBox();
+    b.textContent = `Cargada: ${box.size} colores en Mi caja${faltan.length?" ("+faltan.length+" sin tubo equivalente)":""}`;
+    b.disabled = true;
+  }));
+}
+
+/* índice de códigos, agrupado por familia */
+$("#codes").innerHTML = FAMILIAS.map(f=>{
+  const ps = P.map(x=>PIG[x[0]]).filter(p=>p.fam===f)
+    .sort((a,b)=>a.code.localeCompare(b.code,"en",{numeric:true}));
+  if(!ps.length) return "";
+  return `<div class="codegrp">${f}</div><div class="coderow">` + ps.map(p=>
+    `<button class="code-chip" data-pig="${p.code}" title="${esc(p.name)}">
+       <i style="background:${p.hex}"></i>${p.code}</button>`).join("") + `</div>`;
+}).join("");
+$("#codes").addEventListener("click", e=>{
+  const b = e.target.closest(".code-chip"); if(b) openPig(b.dataset.pig);
+});
+function setHero(mode){
+  const porCodigo = mode === "code";
+  $("#washes").hidden = porCodigo;
+  $("#codes").hidden = !porCodigo;
+  $("#v-color").setAttribute("aria-pressed", String(!porCodigo));
+  $("#v-code").setAttribute("aria-pressed", String(porCodigo));
+  $("#hero-cap").textContent = porCodigo
+    ? `Los ${P.length} pigmentos, por numeración. Pulsa uno para abrir su ficha.`
+    : "Cada franja es un pigmento. Pulsa para abrir su ficha.";
+}
+$("#v-color").addEventListener("click", ()=>setHero("color"));
+$("#v-code").addEventListener("click", ()=>setHero("code"));
+
+/* arranque */
+renderPigs(); renderTubes(); renderBox();
+</script>
+</body>
+</html>
